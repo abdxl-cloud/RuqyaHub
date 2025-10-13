@@ -58,7 +58,7 @@ export function Navigation() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Button variant="ghost" size="icon" asChild className="hidden lg:flex relative">
+            <Button variant="ghost" size="icon" asChild className="relative">
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -98,18 +98,6 @@ export function Navigation() {
                 {isActive(link.href) && <span className="inline-block ml-2 w-1.5 h-1.5 rounded-full bg-primary" />}
               </Link>
             ))}
-            <Link
-              href="/cart"
-              className="flex items-center justify-between py-2 text-base font-medium text-foreground/80 hover:text-primary transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              <span>Cart</span>
-              {itemCount > 0 && (
-                <span className="bg-primary text-primary-foreground text-xs font-semibold rounded-full h-6 w-6 flex items-center justify-center">
-                  {itemCount}
-                </span>
-              )}
-            </Link>
             <Button asChild className="w-full mt-4">
               <Link href="/services">Book Appointment</Link>
             </Button>
