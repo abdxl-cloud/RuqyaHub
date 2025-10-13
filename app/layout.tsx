@@ -2,10 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Cormorant_Garamond, Inter } from "next/font/google"
 import "./globals.css"
-import { Navigation } from "@/components/navigation"
-import { Footer } from "@/components/footer"
-import { LoadingScreen } from "@/components/loading-screen"
-import { CustomerChatWidget } from "@/components/customer-chat-widget"
+import { LayoutContent } from "@/components/layout-content"
 import { Suspense } from "react"
 import { CartProvider } from "@/contexts/cart-context"
 import { AdminAuthProvider } from "@/contexts/admin-auth-context"
@@ -39,15 +36,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="font-sans antialiased">
-        <LoadingScreen />
         <AdminAuthProvider>
           <ChatProvider>
             <CartProvider>
               <Suspense fallback={<div>Loading...</div>}>
-                <Navigation />
-                {children}
-                <Footer />
-                <CustomerChatWidget />
+                <LayoutContent>{children}</LayoutContent>
               </Suspense>
               <Toaster />
             </CartProvider>

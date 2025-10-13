@@ -61,7 +61,7 @@ export function CustomerChatWidget() {
 
       {/* Chat widget */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 w-96 h-[500px] shadow-xl z-50 flex flex-col">
+        <Card className="fixed bottom-24 right-6 w-[calc(100vw-3rem)] sm:w-96 max-w-96 h-[500px] max-h-[calc(100vh-8rem)] shadow-xl z-50 flex flex-col">
           {/* Header */}
           <div className="bg-primary text-primary-foreground p-4 rounded-t-lg">
             <h3 className="font-semibold">Customer Support</h3>
