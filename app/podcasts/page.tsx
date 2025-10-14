@@ -1,6 +1,26 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Play, Download } from "lucide-react"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Spiritual Wellness Podcasts - Islamic Healing Discussions",
+  description:
+    "Listen to insightful podcasts about Islamic spiritual healing, Ruqya practices, and maintaining spiritual wellness. Expert discussions on faith, healing, and spiritual protection.",
+  keywords: [
+    "Islamic podcasts",
+    "Ruqya podcast",
+    "spiritual wellness",
+    "Islamic healing discussions",
+    "faith and healing",
+  ],
+  openGraph: {
+    title: "Spiritual Wellness Podcasts - Islamic Healing Discussions",
+    description:
+      "Listen to insightful podcasts about Islamic spiritual healing, Ruqya practices, and maintaining spiritual wellness.",
+    url: "/podcasts",
+  },
+}
 
 export default function PodcastsPage() {
   const podcasts = [

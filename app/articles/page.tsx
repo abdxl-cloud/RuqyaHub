@@ -3,6 +3,28 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Eye, Heart, Zap, Ghost, FileText, Baby } from "lucide-react"
 import { articlesData, generateSlug } from "@/lib/articles-data"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Articles & Resources - Islamic Spiritual Healing",
+  description:
+    "Educational articles about Islamic spiritual healing, Ruqya practices, protection from evil eye, black magic, jinn possession, and spiritual wellness guidance.",
+  keywords: [
+    "Ruqya articles",
+    "Islamic healing guide",
+    "evil eye protection",
+    "black magic cure",
+    "jinn possession",
+    "spiritual wellness",
+    "Islamic resources",
+  ],
+  openGraph: {
+    title: "Articles & Resources - Islamic Spiritual Healing",
+    description:
+      "Educational articles about Islamic spiritual healing, Ruqya practices, and protection from spiritual harm.",
+    url: "/articles",
+  },
+}
 
 export default function ArticlesPage() {
   const categories = [

@@ -6,6 +6,7 @@ import { ShoppingCart } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 
+// Note: Metadata cannot be exported from client components, handled in layout
 export default function ShopPage() {
   const { addItem } = useCart()
   const { toast } = useToast()

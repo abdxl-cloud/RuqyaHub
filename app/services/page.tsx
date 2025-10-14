@@ -2,6 +2,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Calendar, Video, Users, BookOpen, GraduationCap, MessageCircle } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Ruqya Services - Islamic Spiritual Healing",
+  description:
+    "Comprehensive Islamic Ruqya services including in-person appointments, online consultations, group sessions, and educational workshops. Authentic healing through Qur'an and Sunnah.",
+  keywords: [
+    "Ruqya services",
+    "Islamic healing",
+    "spiritual consultation",
+    "Ruqya appointment",
+    "online Ruqya",
+    "group Ruqya",
+    "Ruqya workshop",
+  ],
+  openGraph: {
+    title: "Ruqya Services - Islamic Spiritual Healing",
+    description:
+      "Comprehensive Islamic Ruqya services including in-person appointments, online consultations, group sessions, and educational workshops.",
+    url: "/services",
+  },
+}
 
 export default function ServicesPage() {
   const services = [
