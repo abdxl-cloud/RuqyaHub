@@ -23,7 +23,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ruqya-healing-hub.vercel.app"),
+  metadataBase: new URL("https://ruqyahub.vercel.app"),
   title: {
     default: "Ruqya Healing Hub - Healing through Qur'an and Sunnah",
     template: "%s | Ruqya Healing Hub",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ruqya-healing-hub.vercel.app",
+    url: "https://ruqyahub.vercel.app",
     siteName: "Ruqya Healing Hub",
     title: "Ruqya Healing Hub - Healing through Qur'an and Sunnah",
     description:
