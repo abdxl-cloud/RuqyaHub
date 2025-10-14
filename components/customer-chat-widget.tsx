@@ -49,6 +49,7 @@ export function CustomerChatWidget() {
         setIsVisible(true)
       } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
         setIsVisible(false)
+        setIsOpen(false) // Close chat widget when hiding on mobile
       }
 
       setLastScrollY(currentScrollY)
