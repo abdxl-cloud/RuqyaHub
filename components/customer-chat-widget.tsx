@@ -17,6 +17,8 @@ export function CustomerChatWidget() {
   const [isStarted, setIsStarted] = useState(false)
   const [messageInput, setMessageInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
 
   const { currentSessionId, sendMessage, createSession, getSessionMessages } = useChat()
 
@@ -31,6 +33,30 @@ export function CustomerChatWidget() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [sessionMessages])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      // Only apply on mobile screens (less than 1024px)
+      if (window.innerWidth >= 1024) {
+        setIsVisible(true)
+        return
+      }
+
+      // Show chat when scrolling up or at top, hide when scrolling down
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true)
+      } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setIsVisible(false)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [lastScrollY])
 
   const handleStartChat = (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,7 +79,9 @@ export function CustomerChatWidget() {
       {/* Floating chat button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 bg-primary hover:bg-primary/90"
+        className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 bg-primary hover:bg-primary/90 transition-all duration-300 ${
+          isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
+        }`}
         size="icon"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}

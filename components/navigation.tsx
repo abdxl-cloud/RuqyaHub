@@ -13,6 +13,7 @@ export function Navigation() {
   const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const [showMenuHint, setShowMenuHint] = useState(false)
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -28,6 +29,30 @@ export function Navigation() {
       return pathname === "/"
     }
     return pathname.startsWith(href)
+  }
+
+  useEffect(() => {
+    const hasVisited = localStorage.getItem("hasVisitedBefore")
+    const isMobile = window.innerWidth < 1024
+
+    if (!hasVisited && isMobile) {
+      setShowMenuHint(true)
+      // Hide hint after 5 seconds
+      const timer = setTimeout(() => {
+        setShowMenuHint(false)
+        localStorage.setItem("hasVisitedBefore", "true")
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const handleMenuClick = () => {
+    setIsOpen(!isOpen)
+    if (showMenuHint) {
+      setShowMenuHint(false)
+      localStorage.setItem("hasVisitedBefore", "true")
+    }
   }
 
   useEffect(() => {
@@ -107,9 +132,17 @@ export function Navigation() {
             </Button>
 
             {/* Mobile menu button */}
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
+            <div className="relative lg:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={handleMenuClick}>
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+              {showMenuHint && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
