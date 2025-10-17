@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class FileUploadResponse(BaseModel):
@@ -16,4 +17,3 @@ class ImageUploadResponse(FileUploadResponse):
 class AudioUploadResponse(FileUploadResponse):
     duration: int  # Required for audio
     format: str
-    

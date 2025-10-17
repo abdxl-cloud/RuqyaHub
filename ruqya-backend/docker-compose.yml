@@ -17,24 +17,44 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - ruqya_network
 
-  api:
-    build: .
-    container_name: ruqya_api
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ruqya_backend
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
-      - ./uploads:/app/uploads
+      - /app/__pycache__
+      - uploads:/app/uploads
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/ruqya_db
+      - SECRET_KEY=dev-secret-key-change-in-production-min-32-chars
+      - FRONTEND_URL=http://localhost:3000
       - ENVIRONMENT=development
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ruqya_network
     restart: unless-stopped
+
+networks:
+  ruqya_network:
+    driver: bridge
 
 volumes:
   postgres_data:
+  uploads:
   
