@@ -34,18 +34,23 @@ help: ## Show this help message
 	@echo "  $(YELLOW)make logs$(NC)                - View all logs"
 	@echo "  $(YELLOW)make clean$(NC)               - Clean all resources"
 	@echo "  $(YELLOW)make reset$(NC)               - Complete reset"
+	@echo "  $(YELLOW)make fix-docker$(NC)          - Fix Docker conflicts"
 	@echo ""
 	@echo "$(MAGENTA)🐳 Docker Commands:$(NC)"
 	@echo "  $(YELLOW)make docker-up$(NC)           - Start all Docker services"
 	@echo "  $(YELLOW)make docker-down$(NC)         - Stop all Docker services"
 	@echo "  $(YELLOW)make docker-build$(NC)        - Build all Docker images"
 	@echo "  $(YELLOW)make docker-logs$(NC)         - View Docker logs"
+	@echo "  $(YELLOW)make docker-cleanup$(NC)      - Remove conflicting containers"
 	@echo ""
 	@echo "$(MAGENTA)🔧 Backend Commands:$(NC)"
 	@echo "  $(YELLOW)make backend-shell$(NC)       - Open backend shell"
 	@echo "  $(YELLOW)make backend-migrate$(NC)     - Run database migrations"
+	@echo "  $(YELLOW)make backend-migrate-safe$(NC) - Run migrations (handles existing tables)"
 	@echo "  $(YELLOW)make backend-seed$(NC)        - Seed database"
 	@echo "  $(YELLOW)make backend-logs$(NC)        - View backend logs"
+	@echo "  $(YELLOW)make backend-db-reset$(NC)    - Reset database (⚠️ Deletes data)"
+	@echo "  $(YELLOW)make backend-migration-fix$(NC) - Fix migration conflicts"
 	@echo ""
 	@echo "$(MAGENTA)💻 Frontend Commands:$(NC)"
 	@echo "  $(YELLOW)make frontend-shell$(NC)      - Open frontend shell"
@@ -58,10 +63,48 @@ help: ## Show this help message
 	@echo ""
 
 # ============================================================================
+# DOCKER CONFLICT RESOLUTION
+# ============================================================================
+
+docker-cleanup: ## Remove conflicting Docker containers
+	@echo "$(YELLOW)🧹 Checking for conflicting containers...$(NC)"
+	@if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q '^ruqya_backend$$'; then \
+		echo "$(RED)Found conflicting ruqya_backend container$(NC)"; \
+		if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^ruqya_backend$$'; then \
+			echo "$(YELLOW)⏸️  Stopping ruqya_backend...$(NC)"; \
+			docker stop ruqya_backend 2>/dev/null || true; \
+		fi; \
+		echo "$(YELLOW)🗑️  Removing ruqya_backend...$(NC)"; \
+		docker rm -f ruqya_backend 2>/dev/null || true; \
+	fi
+	@if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q '^ruqya_db$$'; then \
+		echo "$(RED)Found conflicting ruqya_db container$(NC)"; \
+		if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^ruqya_db$$'; then \
+			echo "$(YELLOW)⏸️  Stopping ruqya_db...$(NC)"; \
+			docker stop ruqya_db 2>/dev/null || true; \
+		fi; \
+		echo "$(YELLOW)🗑️  Removing ruqya_db...$(NC)"; \
+		docker rm -f ruqya_db 2>/dev/null || true; \
+	fi
+	@if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q '^ruqya_frontend$$'; then \
+		echo "$(RED)Found conflicting ruqya_frontend container$(NC)"; \
+		if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^ruqya_frontend$$'; then \
+			echo "$(YELLOW)⏸️  Stopping ruqya_frontend...$(NC)"; \
+			docker stop ruqya_frontend 2>/dev/null || true; \
+		fi; \
+		echo "$(YELLOW)🗑️  Removing ruqya_frontend...$(NC)"; \
+		docker rm -f ruqya_frontend 2>/dev/null || true; \
+	fi
+	@echo "$(GREEN)✅ Cleanup complete!$(NC)"
+
+fix-docker: docker-cleanup docker-up ## Quick fix for Docker conflicts
+	@echo "$(GREEN)✅ Docker issues fixed!$(NC)"
+
+# ============================================================================
 # MAIN COMMANDS
 # ============================================================================
 
-setup: create-env docker-build docker-up wait-for-services backend-migrate backend-seed ## Complete project setup
+setup: create-env docker-cleanup docker-build docker-up wait-for-services backend-migrate-safe backend-seed ## Complete project setup
 	@echo ""
 	@echo "$(GREEN)╔════════════════════════════════════════════════════════════╗$(NC)"
 	@echo "$(GREEN)║              ✅ SETUP COMPLETE!                            ║$(NC)"
@@ -85,7 +128,7 @@ setup: create-env docker-build docker-up wait-for-services backend-migrate backe
 	@echo "  • make health        - Check services health"
 	@echo ""
 
-dev: docker-up ## Start development environment
+dev: docker-cleanup docker-up ## Start development environment
 	@echo "$(GREEN)✅ Development environment started!$(NC)"
 	@echo ""
 	@echo "$(YELLOW)🔗 Frontend:$(NC) http://localhost:3000"
@@ -98,7 +141,7 @@ dev: docker-up ## Start development environment
 stop: docker-down ## Stop all services
 	@echo "$(GREEN)✅ All services stopped!$(NC)"
 
-restart: docker-restart ## Restart all services
+restart: docker-cleanup docker-restart ## Restart all services
 	@echo "$(GREEN)✅ All services restarted!$(NC)"
 
 clean: docker-clean ## Clean all resources
@@ -116,10 +159,13 @@ docker-build: ## Build all Docker images
 	@$(DOCKER_COMPOSE) -f docker-compose.yml build
 	@echo "$(GREEN)✅ All images built!$(NC)"
 
-docker-up: ## Start all Docker services
+docker-up: ## Start all Docker services (with auto-cleanup)
 	@echo "$(BLUE)🐳 Starting all Docker services...$(NC)"
 	@$(DOCKER_COMPOSE) -f docker-compose.yml up -d
 	@echo "$(GREEN)✅ All services started!$(NC)"
+	@echo ""
+	@echo "$(BLUE)📊 Running containers:$(NC)"
+	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || true
 
 docker-down: ## Stop all Docker services
 	@echo "$(YELLOW)⏹️  Stopping all Docker services...$(NC)"
@@ -159,6 +205,27 @@ backend-migrate: ## Run database migrations
 	@docker exec ruqya_backend alembic upgrade head
 	@echo "$(GREEN)✅ Migrations applied!$(NC)"
 
+backend-migrate-safe: ## Run migrations safely (handles existing tables)
+	@echo "$(BLUE)⬆️  Running migrations safely...$(NC)"
+	@CURRENT=$$(docker exec ruqya_backend alembic current 2>/dev/null | grep -o 'ca9402ca9ba8' || echo ""); \
+	if [ -n "$$CURRENT" ]; then \
+		echo "$(GREEN)✅ Migrations already applied!$(NC)"; \
+	else \
+		echo "$(YELLOW)Attempting to run migrations...$(NC)"; \
+		if docker exec ruqya_backend alembic upgrade head 2>&1 | tee /tmp/migration_output.log | grep -q "DuplicateTable\|already exists"; then \
+			echo "$(YELLOW)⚠️  Tables already exist, stamping migration state...$(NC)"; \
+			docker exec ruqya_backend alembic stamp head; \
+			echo "$(GREEN)✅ Migration state synced!$(NC)"; \
+		elif grep -q "Error\|Traceback" /tmp/migration_output.log; then \
+			echo "$(RED)❌ Migration failed!$(NC)"; \
+			cat /tmp/migration_output.log; \
+			exit 1; \
+		else \
+			echo "$(GREEN)✅ Migrations applied successfully!$(NC)"; \
+		fi; \
+		rm -f /tmp/migration_output.log; \
+	fi
+
 backend-seed: ## Seed database
 	@echo "$(BLUE)🌱 Seeding database...$(NC)"
 	@docker exec ruqya_backend python scripts/seed_data.py
@@ -167,6 +234,34 @@ backend-seed: ## Seed database
 backend-db-shell: ## Open database shell
 	@echo "$(BLUE)🐚 Opening database shell...$(NC)"
 	@docker exec -it ruqya_db psql -U postgres ruqya_db
+
+backend-db-reset: ## Reset database (⚠️ Deletes all data)
+	@echo "$(RED)⚠️  WARNING: This will delete ALL database data!$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C within 3 seconds to cancel...$(NC)"
+	@sleep 3
+	@echo "$(BLUE)🗑️  Dropping database...$(NC)"
+	@docker exec ruqya_db psql -U postgres -c "DROP DATABASE IF EXISTS ruqya_db;" 2>/dev/null || true
+	@echo "$(BLUE)🆕 Creating fresh database...$(NC)"
+	@docker exec ruqya_db psql -U postgres -c "CREATE DATABASE ruqya_db;" 2>/dev/null || true
+	@echo "$(BLUE)📋 Running migrations...$(NC)"
+	@docker exec ruqya_backend alembic upgrade head
+	@echo "$(BLUE)🌱 Seeding database...$(NC)"
+	@docker exec ruqya_backend python scripts/seed_data.py
+	@echo "$(GREEN)✅ Database reset complete!$(NC)"
+
+backend-migration-fix: ## Fix migration conflicts
+	@echo "$(BLUE)🔧 Fixing migration state...$(NC)"
+	@docker exec ruqya_backend alembic stamp head
+	@echo "$(GREEN)✅ Migration state fixed!$(NC)"
+	@echo "$(YELLOW)If issues persist, run: make backend-db-reset$(NC)"
+
+backend-alembic-current: ## Show current migration version
+	@echo "$(BLUE)📊 Current migration version:$(NC)"
+	@docker exec ruqya_backend alembic current
+
+backend-alembic-history: ## Show migration history
+	@echo "$(BLUE)📜 Migration history:$(NC)"
+	@docker exec ruqya_backend alembic history --verbose
 
 # ============================================================================
 # FRONTEND COMMANDS
@@ -269,9 +364,11 @@ info: ## Show project information
 	@echo "  • Database (PostgreSQL): Port 5432"
 	@echo ""
 	@echo "$(MAGENTA)💡 Quick Commands:$(NC)"
-	@echo "  • make setup    - Complete setup"
-	@echo "  • make dev      - Start development"
-	@echo "  • make logs     - View logs"
-	@echo "  • make health   - Check health"
-	@echo "  • make stop     - Stop services"
+	@echo "  • make setup       - Complete setup"
+	@echo "  • make dev         - Start development"
+	@echo "  • make logs        - View logs"
+	@echo "  • make health      - Check health"
+	@echo "  • make stop        - Stop services"
+	@echo "  • make fix-docker  - Fix Docker conflicts"
 	@echo ""
+	
