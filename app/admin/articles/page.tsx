@@ -2,7 +2,7 @@
 
 import type React from "react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AdminAuthGuard } from "@/components/admin-auth-guard"
 import { AdminLayout } from "@/components/admin-layout"
 import { Button } from "@/components/ui/button"
@@ -13,13 +13,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { Plus, Edit, Trash2, Eye } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { articlesData as initialArticles, generateSlug, type Article } from "@/lib/articles-data"
+import { apiClient } from "@/lib/api-client"
+import type { Article, PaginatedResponse } from "@/lib/api-types"
 
 const categories = ["Evil Eye & Envy", "Black Magic", "Jinn Possession", "Jinn 'Aashiq", "Taweez", "Ruqya for Children"]
 
 export default function AdminArticlesPage() {
   const { toast } = useToast()
-  const [articles, setArticles] = useState<Article[]>(initialArticles)
+  const [articles, setArticles] = useState<Article[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
@@ -27,39 +29,48 @@ export default function AdminArticlesPage() {
     category: "",
     content: "",
     excerpt: "",
-    readTime: "",
+    read_time: "",
     author: "",
+    published: true,
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchArticles()
+  }, [])
+
+  const fetchArticles = async () => {
+    try {
+      const response = await apiClient.get<PaginatedResponse<Article>>("/articles?skip=0&limit=100", true)
+      setArticles(response.items)
+    } catch (error) {
+      console.error("Failed to fetch articles:", error)
+      toast({ title: "Failed to load articles", variant: "destructive" })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (editingId) {
-      setArticles(
-        articles.map((a) =>
-          a.id === editingId
-            ? {
-                ...a,
-                ...formData,
-                date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
-              }
-            : a,
-        ),
-      )
-      toast({ title: "Article updated successfully" })
-    } else {
-      const newArticle: Article = {
-        id: Date.now().toString(),
-        ...formData,
-        date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+    try {
+      if (editingId) {
+        const updated = await apiClient.put<Article>(`/articles/${editingId}`, formData, true)
+        setArticles(articles.map((a) => (a.id === editingId ? updated : a)))
+        toast({ title: "Article updated successfully" })
+      } else {
+        const newArticle = await apiClient.post<Article>("/articles", formData, true)
+        setArticles([newArticle, ...articles])
+        toast({ title: "Article published successfully" })
       }
-      setArticles([...articles, newArticle])
-      toast({ title: "Article published successfully" })
-    }
 
-    setFormData({ title: "", category: "", content: "", excerpt: "", readTime: "", author: "" })
-    setIsEditing(false)
-    setEditingId(null)
+      setFormData({ title: "", category: "", content: "", excerpt: "", read_time: "", author: "", published: true })
+      setIsEditing(false)
+      setEditingId(null)
+    } catch (error) {
+      console.error("Failed to save article:", error)
+      toast({ title: "Failed to save article", variant: "destructive" })
+    }
   }
 
   const handleEdit = (article: Article) => {
@@ -68,16 +79,37 @@ export default function AdminArticlesPage() {
       category: article.category,
       content: article.content,
       excerpt: article.excerpt,
-      readTime: article.readTime || "",
+      read_time: article.read_time || "",
       author: article.author || "",
+      published: article.published,
     })
     setEditingId(article.id)
     setIsEditing(true)
   }
 
-  const handleDelete = (id: string) => {
-    setArticles(articles.filter((a) => a.id !== id))
-    toast({ title: "Article deleted successfully" })
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this article?")) return
+
+    try {
+      await apiClient.delete(`/articles/${id}`, true)
+      setArticles(articles.filter((a) => a.id !== id))
+      toast({ title: "Article deleted successfully" })
+    } catch (error) {
+      console.error("Failed to delete article:", error)
+      toast({ title: "Failed to delete article", variant: "destructive" })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <AdminAuthGuard>
+        <AdminLayout>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">Loading articles...</p>
+          </div>
+        </AdminLayout>
+      </AdminAuthGuard>
+    )
   }
 
   return (
@@ -144,11 +176,11 @@ export default function AdminArticlesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="readTime">Read Time</Label>
+                      <Label htmlFor="read_time">Read Time</Label>
                       <Input
-                        id="readTime"
-                        value={formData.readTime}
-                        onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
+                        id="read_time"
+                        value={formData.read_time}
+                        onChange={(e) => setFormData({ ...formData, read_time: e.target.value })}
                         placeholder="e.g., 8 min read"
                       />
                     </div>
@@ -176,7 +208,15 @@ export default function AdminArticlesPage() {
                       onClick={() => {
                         setIsEditing(false)
                         setEditingId(null)
-                        setFormData({ title: "", category: "", content: "", excerpt: "", readTime: "", author: "" })
+                        setFormData({
+                          title: "",
+                          category: "",
+                          content: "",
+                          excerpt: "",
+                          read_time: "",
+                          author: "",
+                          published: true,
+                        })
                       }}
                     >
                       Cancel
@@ -188,37 +228,50 @@ export default function AdminArticlesPage() {
           )}
 
           <div className="space-y-4">
-            {articles.map((article) => (
-              <Card key={article.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                          {article.category}
-                        </span>
-                        <span className="text-xs text-muted-foreground">{article.date}</span>
-                      </div>
-                      <CardTitle>{article.title}</CardTitle>
-                      <CardDescription className="mt-2">{article.excerpt}</CardDescription>
-                    </div>
-                    <div className="flex gap-1">
-                      <Link href={`/articles/${generateSlug(article.title)}`} target="_blank">
-                        <Button variant="ghost" size="icon" title="Preview">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(article)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(article.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
+            {articles.length === 0 ? (
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground">No articles yet. Create your first article!</p>
+                </CardContent>
               </Card>
-            ))}
+            ) : (
+              articles.map((article) => (
+                <Card key={article.id}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                            {article.category}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(article.created_at).toLocaleDateString()}
+                          </span>
+                          {!article.published && (
+                            <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">Draft</span>
+                          )}
+                        </div>
+                        <CardTitle>{article.title}</CardTitle>
+                        <CardDescription className="mt-2">{article.excerpt}</CardDescription>
+                      </div>
+                      <div className="flex gap-1">
+                        <Link href={`/articles/${article.slug}`} target="_blank">
+                          <Button variant="ghost" size="icon" title="Preview">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(article)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(article.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </AdminLayout>

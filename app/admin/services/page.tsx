@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AdminAuthGuard } from "@/components/admin-auth-guard"
 import { AdminLayout } from "@/components/admin-layout"
 import { Button } from "@/components/ui/button"
@@ -10,53 +9,100 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { Plus, Edit, Trash2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-
-interface Service {
-  id: string
-  title: string
-  description: string
-  icon: string
-}
+import { apiClient } from "@/lib/api-client"
+import type { Service, PaginatedResponse } from "@/lib/api-types"
 
 export default function AdminServicesPage() {
   const { toast } = useToast()
-  const [services, setServices] = useState<Service[]>([
-    { id: "1", title: "Ruqya Appointment", description: "In-person spiritual healing sessions", icon: "🕌" },
-    { id: "2", title: "Online Ruqya Appointment", description: "Remote healing via video call", icon: "💻" },
-    { id: "3", title: "Consultations", description: "Spiritual guidance and advice", icon: "💬" },
-  ])
+  const [services, setServices] = useState<Service[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [formData, setFormData] = useState({ title: "", description: "", icon: "" })
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    duration: "",
+    price: 0,
+    is_active: true,
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const fetchServices = async () => {
+    try {
+      const response = await apiClient.get<PaginatedResponse<Service>>("/services?skip=0&limit=100", true)
+      setServices(response.items)
+    } catch (error) {
+      console.error("Failed to fetch services:", error)
+      toast({ title: "Failed to load services", variant: "destructive" })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (editingId) {
-      setServices(services.map((s) => (s.id === editingId ? { ...s, ...formData } : s)))
-      toast({ title: "Service updated successfully" })
-    } else {
-      const newService = { id: Date.now().toString(), ...formData }
-      setServices([...services, newService])
-      toast({ title: "Service added successfully" })
-    }
+    try {
+      if (editingId) {
+        const updated = await apiClient.put<Service>(`/services/${editingId}`, formData, true)
+        setServices(services.map((s) => (s.id === editingId ? updated : s)))
+        toast({ title: "Service updated successfully" })
+      } else {
+        const newService = await apiClient.post<Service>("/services", formData, true)
+        setServices([newService, ...services])
+        toast({ title: "Service added successfully" })
+      }
 
-    setFormData({ title: "", description: "", icon: "" })
-    setIsEditing(false)
-    setEditingId(null)
+      setFormData({ name: "", description: "", duration: "", price: 0, is_active: true })
+      setIsEditing(false)
+      setEditingId(null)
+    } catch (error) {
+      console.error("Failed to save service:", error)
+      toast({ title: "Failed to save service", variant: "destructive" })
+    }
   }
 
   const handleEdit = (service: Service) => {
-    setFormData({ title: service.title, description: service.description, icon: service.icon })
+    setFormData({
+      name: service.name,
+      description: service.description,
+      duration: service.duration,
+      price: service.price,
+      is_active: service.is_active,
+    })
     setEditingId(service.id)
     setIsEditing(true)
   }
 
-  const handleDelete = (id: string) => {
-    setServices(services.filter((s) => s.id !== id))
-    toast({ title: "Service deleted successfully" })
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this service?")) return
+
+    try {
+      await apiClient.delete(`/services/${id}`, true)
+      setServices(services.filter((s) => s.id !== id))
+      toast({ title: "Service deleted successfully" })
+    } catch (error) {
+      console.error("Failed to delete service:", error)
+      toast({ title: "Failed to delete service", variant: "destructive" })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <AdminAuthGuard>
+        <AdminLayout>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">Loading services...</p>
+          </div>
+        </AdminLayout>
+      </AdminAuthGuard>
+    )
   }
 
   return (
@@ -83,11 +129,11 @@ export default function AdminServicesPage() {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="title">Service Title</Label>
+                    <Label htmlFor="name">Service Name</Label>
                     <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g., Ruqya Appointment"
                       required
                     />
@@ -103,15 +149,38 @@ export default function AdminServicesPage() {
                       required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="icon">Icon (emoji or text)</Label>
-                    <Input
-                      id="icon"
-                      value={formData.icon}
-                      onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                      placeholder="🕌"
-                      required
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="duration">Duration</Label>
+                      <Input
+                        id="duration"
+                        value={formData.duration}
+                        onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                        placeholder="e.g., 60 minutes"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="price">Price ($)</Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: Number.parseFloat(e.target.value) })}
+                        placeholder="0.00"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="is_active"
+                      checked={formData.is_active}
+                      onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                     />
+                    <Label htmlFor="is_active">Active (visible to users)</Label>
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit">{editingId ? "Update" : "Add"} Service</Button>
@@ -121,7 +190,7 @@ export default function AdminServicesPage() {
                       onClick={() => {
                         setIsEditing(false)
                         setEditingId(null)
-                        setFormData({ title: "", description: "", icon: "" })
+                        setFormData({ name: "", description: "", duration: "", price: 0, is_active: true })
                       }}
                     >
                       Cancel
@@ -133,27 +202,47 @@ export default function AdminServicesPage() {
           )}
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <Card key={service.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="text-3xl mb-2">{service.icon}</div>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(service)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                  <CardTitle>{service.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{service.description}</p>
+            {services.length === 0 ? (
+              <Card className="col-span-full">
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground">No services yet. Add your first service!</p>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              services.map((service) => (
+                <Card key={service.id}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle>{service.name}</CardTitle>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                            ${service.price}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{service.duration}</span>
+                          {!service.is_active && (
+                            <span className="text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground">
+                              Inactive
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(service)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{service.description}</p>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </AdminLayout>

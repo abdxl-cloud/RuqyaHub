@@ -7,6 +7,7 @@ import { Suspense } from "react"
 import { CartProvider } from "@/contexts/cart-context"
 import { AdminAuthProvider } from "@/contexts/admin-auth-context"
 import { ChatProvider } from "@/contexts/chat-context"
+import { AuthProvider } from "@/contexts/auth-context"
 import { Toaster } from "@/components/ui/toaster"
 
 const cormorant = Cormorant_Garamond({
@@ -100,16 +101,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="font-sans antialiased">
-        <AdminAuthProvider>
-          <ChatProvider>
-            <CartProvider>
-              <Suspense fallback={<div>Loading...</div>}>
-                <LayoutContent>{children}</LayoutContent>
-              </Suspense>
-              <Toaster />
-            </CartProvider>
-          </ChatProvider>
-        </AdminAuthProvider>
+        <AuthProvider>
+          <AdminAuthProvider>
+            <ChatProvider>
+              <CartProvider>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <LayoutContent>{children}</LayoutContent>
+                </Suspense>
+                <Toaster />
+              </CartProvider>
+            </ChatProvider>
+          </AdminAuthProvider>
+        </AuthProvider>
       </body>
     </html>
   )

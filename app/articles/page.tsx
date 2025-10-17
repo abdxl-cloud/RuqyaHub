@@ -2,8 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Eye, Heart, Zap, Ghost, FileText, Baby } from "lucide-react"
-import { articlesData, generateSlug } from "@/lib/articles-data"
 import type { Metadata } from "next"
+import { apiClient } from "@/lib/api-client"
+import type { Article, PaginatedResponse } from "@/lib/api-types"
 
 export const metadata: Metadata = {
   title: "Articles & Resources - Islamic Spiritual Healing",
@@ -26,7 +27,17 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ArticlesPage() {
+async function getArticles(): Promise<Article[]> {
+  try {
+    const response = await apiClient.get<PaginatedResponse<Article>>("/articles?skip=0&limit=100")
+    return response.items.filter((article) => article.published)
+  } catch (error) {
+    console.error("Failed to fetch articles:", error)
+    return []
+  }
+}
+
+export default async function ArticlesPage() {
   const categories = [
     { name: "Evil Eye & Envy", icon: Eye, color: "bg-primary/10 text-primary" },
     { name: "Black Magic", icon: Zap, color: "bg-primary/10 text-primary" },
@@ -36,7 +47,7 @@ export default function ArticlesPage() {
     { name: "Ruqya for Children", icon: Baby, color: "bg-primary/10 text-primary" },
   ]
 
-  const articles = articlesData
+  const articles = await getArticles()
 
   return (
     <div className="min-h-screen py-16 md:py-20">
@@ -75,29 +86,37 @@ export default function ArticlesPage() {
         {/* Articles */}
         <div className="space-y-6">
           <h2 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">Latest Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {articles.map((article) => (
-              <Link key={article.id} href={`/articles/${generateSlug(article.title)}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardHeader>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Badge variant="secondary">{article.category}</Badge>
-                    </div>
-                    <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors">
-                      {article.title}
-                    </CardTitle>
-                    <CardDescription className="text-base leading-relaxed">{article.excerpt}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{article.date}</span>
-                      <span>{article.readTime}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          {articles.length === 0 ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <p className="text-muted-foreground">No articles available at the moment.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {articles.map((article) => (
+                <Link key={article.id} href={`/articles/${article.slug}`}>
+                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
+                    <CardHeader>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="secondary">{article.category}</Badge>
+                      </div>
+                      <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors">
+                        {article.title}
+                      </CardTitle>
+                      <CardDescription className="text-base leading-relaxed">{article.excerpt}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span>{new Date(article.created_at).toLocaleDateString()}</span>
+                        <span>{article.read_time}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Newsletter */}
