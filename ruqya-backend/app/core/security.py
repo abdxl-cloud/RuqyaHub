@@ -129,4 +129,3 @@ async def verify_websocket_token(token: str, db: Session):
         return user if user and user.is_active else None
     except:
         return None
-        

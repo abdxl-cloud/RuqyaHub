@@ -143,4 +143,3 @@ async def increment_download_count(audio_id: str, db: Session = Depends(get_db))
         message="Download count incremented",
         download_count=audio.downloads
     )
-    

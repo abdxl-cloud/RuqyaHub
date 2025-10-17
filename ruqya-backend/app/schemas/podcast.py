@@ -37,4 +37,3 @@ class PodcastResponse(PodcastBase):
 class PodcastListResponse(BaseModel):
     total: int
     items: list[PodcastResponse]
-    

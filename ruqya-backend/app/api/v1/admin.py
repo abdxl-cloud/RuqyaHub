@@ -157,4 +157,3 @@ async def update_user_admin(
     db.refresh(user)
     
     return UserResponse.model_validate(user)
-    

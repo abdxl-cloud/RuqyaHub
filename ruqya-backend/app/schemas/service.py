@@ -36,4 +36,3 @@ class ServiceResponse(ServiceBase):
 class ServiceListResponse(BaseModel):
     total: int
     items: list[ServiceResponse]
-    

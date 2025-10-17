@@ -17,7 +17,7 @@
 
 ## 🚀 Frontend 
 
-```bash
+\`\`\`bash
 # Clone the repository
 git clone https://github.com/yourusername/ruqya-healing-hub.git
 cd ruqya-healing-hub
@@ -30,16 +30,16 @@ cp .env.example .env.local
 
 # Run development server
 pnpm dev
-```
+\`\`\`
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Build for Production
 
-```bash
+\`\`\`bash
 pnpm build
 pnpm start
-```
+\`\`\`
 
 
 
@@ -56,7 +56,7 @@ pnpm start
 
 ## 📁 Project Structure
 
-```
+\`\`\`
 ruqya-healing-hub/
 ├── app/                    # Next.js App Router
 │   ├── admin/             # Admin dashboard (dashboard, services, articles, podcasts, audio, chat)
@@ -80,7 +80,7 @@ ruqya-healing-hub/
 ├── hooks/                # Custom React hooks
 ├── lib/                  # Utility functions
 └── public/               # Static assets
-```
+\`\`\`
 
 
 
@@ -113,7 +113,7 @@ ruqya-healing-hub/
 
 Create `.env.local` in the root directory:
 
-```env
+\`\`\`env
 # Application
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
@@ -121,18 +121,18 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # DATABASE_URL=
 # NEXTAUTH_SECRET=
 # STRIPE_PUBLIC_KEY=
-```
+\`\`\`
 
 
 
 ## 🛠️ Development
 
-```bash
+\`\`\`bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
 pnpm start        # Start production server
 pnpm lint         # Run ESLint
-```
+\`\`\`
 
 ### Development Guidelines
 - Use TypeScript for type safety
@@ -175,7 +175,7 @@ pnpm lint         # Run ESLint
 ## Quick Start
 
 ### 1. Clone and Setup
-```bash
+\`\`\`bash
 # Clone repository
 git clone 
 cd ruqya-backend
@@ -188,24 +188,24 @@ python -m venv venv
 venv\Scripts\activate
 # On Mac/Linux:
 source venv/bin/activate
-```
+\`\`\`
 
 ### 2. Install Dependencies
-```bash
+\`\`\`bash
 make install
-```
+\`\`\`
 
 ### 3. Configure Environment
 
 Create `.env` file:
-```env
+\`\`\`env
 DATABASE_URL=postgresql://postgres:password@localhost:5432/ruqya_db
 SECRET_KEY=your-secret-key-here
 FRONTEND_URL=http://localhost:3000
-```
+\`\`\`
 
 ### 4. Setup Database
-```bash
+\`\`\`bash
 # Create database
 createdb ruqya_db
 
@@ -214,12 +214,12 @@ make migrate-up
 
 # Seed data
 make seed
-```
+\`\`\`
 
 ### 5. Run Development Server
-```bash
+\`\`\`bash
 make dev
-```
+\`\`\`
 
 API will be available at: http://localhost:8000
 
@@ -227,7 +227,7 @@ API will be available at: http://localhost:8000
 - **ReDoc**: http://localhost:8000/redoc
 
 ## Available Make Commands
-```bash
+\`\`\`bash
 make help              # Show all available commands
 make install           # Install dependencies
 make dev               # Run development server
@@ -245,7 +245,7 @@ make check             # Run all code quality checks
 make db-reset          # Reset database completely
 make docker-up         # Start with Docker
 make setup             # Complete initial setup
-```
+\`\`\`
 
 ## Default Admin Credentials
 
@@ -255,7 +255,7 @@ make setup             # Complete initial setup
 ⚠️ **Change these credentials after first login!**
 
 ## Project Structure
-```
+\`\`\`
 ruqya-backend/
 ├── app/
 │   ├── api/v1/          # API endpoints
@@ -273,7 +273,7 @@ ruqya-backend/
 ├── .env                 # Environment variables
 ├── Makefile            # Make commands
 └── requirements.txt     # Dependencies
-```
+\`\`\`
 
 ## API Documentation
 
@@ -282,7 +282,7 @@ Once the server is running, visit:
 - ReDoc: http://localhost:8000/redoc
 
 ## Testing
-```bash
+\`\`\`bash
 # Run all tests
 make test
 
@@ -291,10 +291,10 @@ make test
 
 # Run in watch mode
 make test-watch
-```
+\`\`\`
 
 ## Docker (Optional)
-```bash
+\`\`\`bash
 # Build and start
 make docker-up
 
@@ -303,7 +303,7 @@ make docker-down
 
 # View logs
 make docker-logs
-```
+\`\`\`
 
 ## License
 

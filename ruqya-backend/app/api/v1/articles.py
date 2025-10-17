@@ -204,4 +204,3 @@ async def get_related_articles(
     ).limit(limit).all()
     
     return [ArticleRelatedResponse.model_validate(a) for a in related]
-    

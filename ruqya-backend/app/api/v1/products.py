@@ -118,4 +118,3 @@ async def delete_product(
     db.commit()
     
     return None
-    

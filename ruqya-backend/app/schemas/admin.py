@@ -29,4 +29,3 @@ class DashboardStats(BaseModel):
 class AdminUserListResponse(BaseModel):
     total: int
     items: List[UserResponse]
-    

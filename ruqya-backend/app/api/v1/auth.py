@@ -229,4 +229,3 @@ async def change_password(
     db.commit()
     
     return MessageResponse(message="Password successfully changed")
-    

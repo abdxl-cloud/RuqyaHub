@@ -49,4 +49,3 @@ class AppointmentListResponse(BaseModel):
 
 class AppointmentStatusUpdate(BaseModel):
     status: AppointmentStatus
-    

@@ -190,4 +190,3 @@ async def update_order_status(
     db.refresh(order)
     
     return OrderResponse.model_validate(order)
-    

@@ -30,4 +30,3 @@ class Appointment(Base):
     # Relationships
     user = relationship("User", back_populates="appointments")
     service = relationship("Service", back_populates="appointments")
-    

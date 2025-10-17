@@ -44,4 +44,3 @@ class AudioListResponse(BaseModel):
 class AudioDownloadResponse(BaseModel):
     message: str
     download_count: int
-    

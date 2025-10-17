@@ -312,4 +312,3 @@ info: ## Show project information
 	@echo "  • SQLAlchemy 2.0 + Alembic"
 	@echo "  • WebSocket support"
 	@echo ""
-	

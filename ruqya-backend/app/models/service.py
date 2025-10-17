@@ -19,4 +19,3 @@ class Service(Base):
     
     # Relationships
     appointments = relationship("Appointment", back_populates="service")
-    

@@ -19,4 +19,3 @@ class Product(Base):
     
     # Relationships
     order_items = relationship("OrderItem", back_populates="product")
-    

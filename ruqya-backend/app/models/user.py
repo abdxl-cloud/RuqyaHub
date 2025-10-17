@@ -26,4 +26,3 @@ class User(Base):
     # Relationships
     appointments = relationship("Appointment", back_populates="user")
     orders = relationship("Order", back_populates="user")
-    

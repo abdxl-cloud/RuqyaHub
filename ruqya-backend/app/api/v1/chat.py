@@ -343,4 +343,3 @@ async def websocket_endpoint(
     except Exception as e:
         manager.disconnect(websocket, session_id)
         print(f"WebSocket error: {e}")
-        

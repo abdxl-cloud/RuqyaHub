@@ -156,4 +156,3 @@ async def delete_appointment(
     db.commit()
     
     return None
-    
