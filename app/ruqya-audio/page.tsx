@@ -1,6 +1,27 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Play, Download, Volume2 } from "lucide-react"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Ruqya Audio Library - Authentic Islamic Recitations",
+  description:
+    "Authentic Ruqya recitations by renowned scholars. Listen to Quranic verses for protection against evil eye, black magic, and jinn possession. Download for personal use.",
+  keywords: [
+    "Ruqya audio",
+    "Islamic recitation",
+    "Quran healing",
+    "Ruqya MP3",
+    "Islamic protection audio",
+    "Ayat Al-Kursi",
+    "Surah Al-Baqarah",
+  ],
+  openGraph: {
+    title: "Ruqya Audio Library - Authentic Islamic Recitations",
+    description: "Authentic Ruqya recitations by renowned scholars. Listen online or download for personal use.",
+    url: "/ruqya-audio",
+  },
+}
 
 export default function RuqyaAudioPage() {
   const audioCategories = [

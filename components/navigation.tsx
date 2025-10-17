@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/contexts/cart-context"
@@ -11,6 +11,9 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const { itemCount } = useCart()
   const pathname = usePathname()
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const [showMenuHint, setShowMenuHint] = useState(false)
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -28,8 +31,61 @@ export function Navigation() {
     return pathname.startsWith(href)
   }
 
+  useEffect(() => {
+    const hasVisited = localStorage.getItem("hasVisitedBefore")
+    const isMobile = window.innerWidth < 1024
+
+    if (!hasVisited && isMobile) {
+      setShowMenuHint(true)
+      // Hide hint after 8 seconds
+      const timer = setTimeout(() => {
+        setShowMenuHint(false)
+        localStorage.setItem("hasVisitedBefore", "true")
+      }, 8000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const handleMenuClick = () => {
+    setIsOpen(!isOpen)
+    if (showMenuHint) {
+      setShowMenuHint(false)
+      localStorage.setItem("hasVisitedBefore", "true")
+    }
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      // Only apply on mobile screens (less than 1024px)
+      if (window.innerWidth >= 1024) {
+        setIsVisible(true)
+        return
+      }
+
+      // Show nav when scrolling up or at top, hide when scrolling down
+      if (currentScrollY < lastScrollY || currentScrollY < 10) {
+        setIsVisible(true)
+      } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setIsVisible(false)
+        setIsOpen(false) // Close mobile menu when hiding
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [lastScrollY])
+
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
+    <nav
+      className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border transition-transform duration-300 ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -58,7 +114,7 @@ export function Navigation() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Button variant="ghost" size="icon" asChild className="hidden lg:flex relative">
+            <Button variant="ghost" size="icon" asChild className="relative">
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
                 {itemCount > 0 && (
@@ -76,9 +132,17 @@ export function Navigation() {
             </Button>
 
             {/* Mobile menu button */}
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
+            <div className="relative lg:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={handleMenuClick}>
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+              {showMenuHint && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-5 w-5 bg-primary"></span>
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

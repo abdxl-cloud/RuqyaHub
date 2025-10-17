@@ -4,16 +4,37 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, Clock, User, Share2 } from "lucide-react"
-import { getArticleBySlug, getRelatedArticles, generateSlug } from "@/lib/articles-data"
+import { apiClient } from "@/lib/api-client"
+import type { Article, PaginatedResponse } from "@/lib/api-types"
 
-export default function ArticlePage({ params }: { params: { slug: string } }) {
-  const article = getArticleBySlug(params.slug)
+async function getArticle(slug: string): Promise<Article | null> {
+  try {
+    const article = await apiClient.get<Article>(`/articles/${slug}`)
+    return article.published ? article : null
+  } catch (error) {
+    console.error("Failed to fetch article:", error)
+    return null
+  }
+}
+
+async function getRelatedArticles(category: string, currentId: string): Promise<Article[]> {
+  try {
+    const response = await apiClient.get<PaginatedResponse<Article>>(`/articles?category=${category}&skip=0&limit=4`)
+    return response.items.filter((article) => article.id !== currentId && article.published).slice(0, 3)
+  } catch (error) {
+    console.error("Failed to fetch related articles:", error)
+    return []
+  }
+}
+
+export default async function ArticlePage({ params }: { params: { slug: string } }) {
+  const article = await getArticle(params.slug)
 
   if (!article) {
     notFound()
   }
 
-  const relatedArticles = getRelatedArticles(article.id, article.category)
+  const relatedArticles = await getRelatedArticles(article.category, article.id)
 
   return (
     <div className="min-h-screen py-8 md:py-12">
@@ -60,11 +81,11 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
               )}
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                <span>{article.date}</span>
+                <span>{new Date(article.created_at).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <span>{article.readTime}</span>
+                <span>{article.read_time}</span>
               </div>
               <Button variant="ghost" size="sm" className="ml-auto">
                 <Share2 className="h-4 w-4 mr-2" />
@@ -98,7 +119,7 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
             <h2 className="text-3xl font-serif font-semibold text-foreground mb-8">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map((relatedArticle) => (
-                <Link key={relatedArticle.id} href={`/articles/${generateSlug(relatedArticle.title)}`}>
+                <Link key={relatedArticle.id} href={`/articles/${relatedArticle.slug}`}>
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
                     <CardHeader>
                       <Badge variant="secondary" className="w-fit mb-2">
@@ -111,8 +132,8 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{relatedArticle.date}</span>
-                        <span>{relatedArticle.readTime}</span>
+                        <span>{new Date(relatedArticle.created_at).toLocaleDateString()}</span>
+                        <span>{relatedArticle.read_time}</span>
                       </div>
                     </CardContent>
                   </Card>

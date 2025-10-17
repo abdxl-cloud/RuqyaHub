@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useCart } from "@/contexts/cart-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,6 +13,8 @@ import { useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { ShoppingBag } from "lucide-react"
 import Link from "next/link"
+import { apiClient } from "@/lib/api-client"
+import type { OrderCreate } from "@/lib/api-types"
 
 export default function CheckoutPage() {
   const { items, total, clearCart, itemCount } = useCart()
@@ -21,25 +22,63 @@ export default function CheckoutPage() {
   const { toast } = useToast()
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("card")
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    apartment: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
+  })
 
   const shippingCost = 10
   const finalTotal = total + shippingCost
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value })
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsProcessing(true)
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      const shippingAddress = `${formData.address}${formData.apartment ? `, ${formData.apartment}` : ""}, ${formData.city}, ${formData.state} ${formData.zip}, ${formData.country}`
 
-    toast({
-      title: "Order placed successfully!",
-      description: "Thank you for your purchase. You will receive a confirmation email shortly.",
-    })
+      const orderData: OrderCreate = {
+        items: items.map((item) => ({
+          product_id: item.id.toString(),
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        shipping_address: shippingAddress,
+        contact_email: formData.email,
+        contact_name: `${formData.firstName} ${formData.lastName}`,
+      }
 
-    clearCart()
-    setIsProcessing(false)
-    router.push("/")
+      await apiClient.post("/orders", orderData)
+
+      toast({
+        title: "Order placed successfully!",
+        description: "Thank you for your purchase. You will receive a confirmation email shortly.",
+      })
+
+      clearCart()
+      router.push("/")
+    } catch (error) {
+      console.error("Failed to create order:", error)
+      toast({
+        title: "Order failed",
+        description: "There was an error processing your order. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   if (items.length === 0) {
@@ -86,20 +125,46 @@ export default function CheckoutPage() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="Ahmed" required />
+                        <Input
+                          id="firstName"
+                          placeholder="Ahmed"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          required
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Hassan" required />
+                        <Input
+                          id="lastName"
+                          placeholder="Hassan"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          required
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="ahmed@example.com" required />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="ahmed@example.com"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number</Label>
-                      <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" required />
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+1 (555) 000-0000"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -112,29 +177,64 @@ export default function CheckoutPage() {
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="address">Street Address</Label>
-                      <Input id="address" placeholder="123 Main Street" required />
+                      <Input
+                        id="address"
+                        placeholder="123 Main Street"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="apartment">Apartment, suite, etc. (optional)</Label>
-                      <Input id="apartment" placeholder="Apt 4B" />
+                      <Input
+                        id="apartment"
+                        placeholder="Apt 4B"
+                        value={formData.apartment}
+                        onChange={handleInputChange}
+                      />
                     </div>
                     <div className="grid sm:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="city">City</Label>
-                        <Input id="city" placeholder="New York" required />
+                        <Input
+                          id="city"
+                          placeholder="New York"
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          required
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="state">State</Label>
-                        <Input id="state" placeholder="NY" required />
+                        <Input
+                          id="state"
+                          placeholder="NY"
+                          value={formData.state}
+                          onChange={handleInputChange}
+                          required
+                        />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="zip">ZIP Code</Label>
-                        <Input id="zip" placeholder="10001" required />
+                        <Input
+                          id="zip"
+                          placeholder="10001"
+                          value={formData.zip}
+                          onChange={handleInputChange}
+                          required
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="country">Country</Label>
-                      <Input id="country" placeholder="United States" required />
+                      <Input
+                        id="country"
+                        placeholder="United States"
+                        value={formData.country}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                   </CardContent>
                 </Card>
