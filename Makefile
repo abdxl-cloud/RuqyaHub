@@ -35,6 +35,8 @@ help: ## Show this help message
 	@echo "  $(YELLOW)make clean$(NC)               - Clean all resources"
 	@echo "  $(YELLOW)make reset$(NC)               - Complete reset"
 	@echo "  $(YELLOW)make fix-docker$(NC)          - Fix Docker conflicts"
+	@echo "  $(YELLOW)make fix-connectivity$(NC)   - Fix frontend-backend connection"
+	@echo "  $(YELLOW)make diagnose$(NC)           - Diagnose connectivity issues"
 	@echo ""
 	@echo "$(MAGENTA)🐳 Docker Commands:$(NC)"
 	@echo "  $(YELLOW)make docker-up$(NC)           - Start all Docker services"
@@ -99,6 +101,42 @@ docker-cleanup: ## Remove conflicting Docker containers
 
 fix-docker: docker-cleanup docker-up ## Quick fix for Docker conflicts
 	@echo "$(GREEN)✅ Docker issues fixed!$(NC)"
+
+fix-connectivity: ## Fix frontend-backend connectivity
+	@echo "$(BLUE)🔧 Fixing frontend-backend connectivity...$(NC)"
+	@echo "$(YELLOW)Updating .env.local with correct API URL...$(NC)"
+	@echo "NEXT_PUBLIC_API_URL=http://backend:8000" > .env.local
+	@echo "NEXT_PUBLIC_APP_URL=http://localhost:3000" >> .env.local
+	@echo "$(GREEN)✅ .env.local updated$(NC)"
+	@echo "$(BLUE)🔄 Restarting frontend...$(NC)"
+	@docker restart ruqya_frontend
+	@sleep 3
+	@echo "$(GREEN)✅ Frontend restarted!$(NC)"
+	@echo ""
+	@echo "$(CYAN)Testing connectivity...$(NC)"
+	@sleep 2
+	@curl -s http://localhost:8000/health > /dev/null && echo "$(GREEN)✅ Backend is healthy$(NC)" || echo "$(RED)❌ Backend not responding$(NC)"
+	@echo ""
+	@echo "$(YELLOW)🔗 URLs:$(NC)"
+	@echo "  • Frontend: http://localhost:3000"
+	@echo "  • Backend: http://localhost:8000"
+	@echo "  • API Docs: http://localhost:8000/docs"
+
+diagnose: ## Diagnose connectivity issues
+	@echo "$(BLUE)🔍 Running connectivity diagnostic...$(NC)"
+	@echo ""
+	@echo "$(YELLOW)1. Checking containers:$(NC)"
+	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep ruqya || echo "$(RED)No ruqya containers running$(NC)"
+	@echo ""
+	@echo "$(YELLOW)2. Testing backend from host:$(NC)"
+	@curl -s http://localhost:8000/health | python3 -m json.tool 2>/dev/null || echo "$(RED)❌ Cannot reach backend$(NC)"
+	@echo ""
+	@echo "$(YELLOW)3. Testing backend from frontend container:$(NC)"
+	@docker exec ruqya_frontend wget -qO- http://backend:8000/health 2>/dev/null || echo "$(RED)❌ Frontend cannot reach backend$(NC)"
+	@echo ""
+	@echo "$(YELLOW)4. Checking frontend environment:$(NC)"
+	@docker exec ruqya_frontend env | grep NEXT_PUBLIC || echo "$(YELLOW)No NEXT_PUBLIC vars found$(NC)"
+	@echo ""
 
 # ============================================================================
 # MAIN COMMANDS
@@ -371,3 +409,4 @@ info: ## Show project information
 	@echo "  • make stop        - Stop services"
 	@echo "  • make fix-docker  - Fix Docker conflicts"
 	@echo ""
+	
