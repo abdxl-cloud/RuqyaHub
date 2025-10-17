@@ -72,15 +72,15 @@ export default function HomePage() {
       <section className="py-16 md:py-20 bg-card">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {quickLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
+            {quickLinks.map((item) => (
+              <Link key={item.href} href={item.href}>
                 <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardContent className="p-8 space-y-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <link.icon className="h-6 w-6 text-primary" />
+                      <item.icon className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="text-xl font-serif font-semibold text-foreground">{link.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{link.description}</p>
+                    <h3 className="text-xl font-serif font-semibold text-foreground">{item.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                   </CardContent>
                 </Card>
               </Link>
