@@ -20,6 +20,10 @@ interface RequestOptions extends RequestInit {
   requiresAuth?: boolean
 }
 
+function isBrowser(): boolean {
+  return typeof window !== "undefined"
+}
+
 async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { requiresAuth = false, ...fetchOptions } = options
 
@@ -28,7 +32,7 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
     ...fetchOptions.headers,
   }
 
-  if (requiresAuth) {
+  if (requiresAuth && isBrowser()) {
     const token = localStorage.getItem("access_token")
     if (token) {
       headers["Authorization"] = `Bearer ${token}`
@@ -39,9 +43,10 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
     const response = await fetch(`${API_URL}/api/v1${endpoint}`, {
       ...fetchOptions,
       headers,
+      cache: fetchOptions.cache || "no-store",
     })
 
-    if (response.status === 401 && requiresAuth) {
+    if (response.status === 401 && requiresAuth && isBrowser()) {
       const refreshed = await refreshAccessToken()
       if (refreshed) {
         const token = localStorage.getItem("access_token")
@@ -80,11 +85,17 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
     if (error instanceof ApiClientError) {
       throw error
     }
-    throw new ApiClientError(error instanceof Error ? error.message : "Network error", 0)
+    const message = error instanceof Error ? error.message : "Network error"
+    console.error(`API request failed for ${endpoint}:`, message)
+    throw new ApiClientError(message, 0)
   }
 }
 
 async function refreshAccessToken(): Promise<boolean> {
+  if (!isBrowser()) {
+    return false
+  }
+
   const refreshToken = localStorage.getItem("refresh_token")
   if (!refreshToken) {
     return false
@@ -155,7 +166,7 @@ export const apiClient = {
     formData.append("file", file)
 
     const headers: HeadersInit = {}
-    if (requiresAuth) {
+    if (requiresAuth && isBrowser()) {
       const token = localStorage.getItem("access_token")
       if (token) {
         headers["Authorization"] = `Bearer ${token}`
@@ -178,10 +189,12 @@ export const apiClient = {
 }
 
 export function isAuthenticated(): boolean {
-  return !!localStorage.getItem("access_token")
+  return isBrowser() && !!localStorage.getItem("access_token")
 }
 
 export function clearAuthTokens(): void {
-  localStorage.removeItem("access_token")
-  localStorage.removeItem("refresh_token")
+  if (isBrowser()) {
+    localStorage.removeItem("access_token")
+    localStorage.removeItem("refresh_token")
+  }
 }
