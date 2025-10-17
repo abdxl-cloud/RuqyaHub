@@ -28,7 +28,6 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
     ...fetchOptions.headers,
   }
 
-  // Add auth token if required
   if (requiresAuth) {
     const token = localStorage.getItem("access_token")
     if (token) {
@@ -42,11 +41,9 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
       headers,
     })
 
-    // Handle 401 - try to refresh token
     if (response.status === 401 && requiresAuth) {
       const refreshed = await refreshAccessToken()
       if (refreshed) {
-        // Retry the request with new token
         const token = localStorage.getItem("access_token")
         if (token) {
           headers["Authorization"] = `Bearer ${token}`
@@ -74,7 +71,6 @@ async function apiRequest<T>(endpoint: string, options: RequestOptions = {}): Pr
       )
     }
 
-    // Handle 204 No Content
     if (response.status === 204) {
       return {} as T
     }
@@ -104,7 +100,6 @@ async function refreshAccessToken(): Promise<boolean> {
     })
 
     if (!response.ok) {
-      // Refresh token is invalid, clear tokens
       localStorage.removeItem("access_token")
       localStorage.removeItem("refresh_token")
       return false
@@ -122,79 +117,71 @@ async function refreshAccessToken(): Promise<boolean> {
   }
 }
 
-// API Client methods
 export const apiClient = {
-  // GET request
-  get: <T>(endpoint: string, requiresAuth = false) =>\
-    apiRequest<T>(endpoint, { method: 'GET', requiresAuth }),
+  get<T>(endpoint: string, requiresAuth = false) {
+    return apiRequest<T>(endpoint, { method: "GET", requiresAuth })
+  },
 
-  // POST request
-  post: <T>(endpoint: string, data?: any, requiresAuth = false) =>
-    apiRequest<T>(endpoint, {\
-      method: 'POST',
+  post<T>(endpoint: string, data?: any, requiresAuth = false) {
+    return apiRequest<T>(endpoint, {
+      method: "POST",
       body: data ? JSON.stringify(data) : undefined,
       requiresAuth,
-    }),
+    })
+  },
 
-  // PUT request
-  put: <T>(endpoint: string, data?: any, requiresAuth = false) =>
-    apiRequest<T>(endpoint, {\
-      method: 'PUT',
+  put<T>(endpoint: string, data?: any, requiresAuth = false) {
+    return apiRequest<T>(endpoint, {
+      method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
       requiresAuth,
-    }),
+    })
+  },
 
-  // PATCH request
-  patch: <T>(endpoint: string, data?: any, requiresAuth = false) =>
-    apiRequest<T>(endpoint, {\
-      method: 'PATCH',
+  patch<T>(endpoint: string, data?: any, requiresAuth = false) {
+    return apiRequest<T>(endpoint, {
+      method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
       requiresAuth,
-    }),
+    })
+  },
 
-  // DELETE request
-  delete: <T>(endpoint: string, requiresAuth = false) =>\
-    apiRequest<T>(endpoint, { method: 'DELETE', requiresAuth }),
+  delete<T>(endpoint: string, requiresAuth = false) {
+    return apiRequest<T>(endpoint, { method: "DELETE", requiresAuth })
+  },
 
-  // Upload file
-  upload: async <T>(endpoint: string, file: File, requiresAuth = true): Promise<T> => {\
+  async upload<T>(endpoint: string, file: File, requiresAuth = true): Promise<T> {
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append("file", file)
 
     const headers: HeadersInit = {}
-    if (requiresAuth) {\
-      const token = localStorage.getItem('access_token')
+    if (requiresAuth) {
+      const token = localStorage.getItem("access_token")
       if (token) {
-        headers['Authorization'] = `Bearer ${token}`
+        headers["Authorization"] = `Bearer ${token}`
       }
     }
 
-    const response = await fetch(`${API_URL}/api/v1${endpoint}`, {\
-      method: 'POST',
+    const response = await fetch(`${API_URL}/api/v1${endpoint}`, {
+      method: "POST",
       headers,
       body: formData,
     })
 
-    if (!response.ok) {\
+    if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      throw new ApiClientError(
-        errorData.detail || 'Upload failed',
-        response.status,
-        errorData
-      )
+      throw new ApiClientError(errorData.detail || "Upload failed", response.status, errorData)
     }
 
     return response.json()
   },
 }
 
-// Helper to check if user is authenticated
-export function isAuthenticated(): boolean {\
-  return !!localStorage.getItem('access_token')
+export function isAuthenticated(): boolean {
+  return !!localStorage.getItem("access_token")
 }
 
-// Helper to clear auth tokens
 export function clearAuthTokens(): void {
-  localStorage.removeItem('access_token')\
-  localStorage.removeItem('refresh_token')\
+  localStorage.removeItem("access_token")
+  localStorage.removeItem("refresh_token")
 }
