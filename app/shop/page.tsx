@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 import { apiClient } from "@/lib/api-client"
 import type { Product, PaginatedResponse } from "@/lib/api-types"
+import { formatPrice } from "@/lib/utils"
 
 export default function ShopPage() {
   const { addItem } = useCart()
@@ -89,7 +90,7 @@ export default function ShopPage() {
                     <img
                       src={
                         product.image ||
-                        `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name)}`
+                        `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name) || "/placeholder.svg"}`
                       }
                       alt={product.name}
                       className="w-full h-full object-cover"
@@ -106,7 +107,7 @@ export default function ShopPage() {
                   )}
                 </CardContent>
                 <CardFooter className="p-6 pt-0 flex items-center justify-between">
-                  <span className="text-3xl font-bold text-primary">${product.price}</span>
+                  <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}</span>
                   <Button
                     onClick={() => handleAddToCart(product)}
                     disabled={product.stock_quantity === 0}

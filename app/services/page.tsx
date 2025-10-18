@@ -5,6 +5,7 @@ import Link from "next/link"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api-client"
 import type { Service, PaginatedResponse } from "@/lib/api-types"
+import { formatPrice } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "Ruqya Services - Islamic Spiritual Healing",
@@ -97,7 +98,7 @@ export default async function ServicesPage() {
                   <CardContent className="mt-auto space-y-5">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">{service.duration} minutes</span>
-                      <span className="font-bold text-primary text-2xl">${service.price}</span>
+                      <span className="font-bold text-primary text-2xl">{formatPrice(service.price)}</span>
                     </div>
                     <Button className="w-full btn-primary-enhanced shadow-md hover:shadow-lg" asChild>
                       <Link href="#book">Book Now</Link>

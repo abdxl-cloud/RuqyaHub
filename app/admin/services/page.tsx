@@ -14,6 +14,7 @@ import { Plus, Edit, Trash2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { apiClient } from "@/lib/api-client"
 import type { Service, PaginatedResponse } from "@/lib/api-types"
+import { formatPrice } from "@/lib/utils"
 
 export default function AdminServicesPage() {
   const { toast } = useToast()
@@ -161,15 +162,15 @@ export default function AdminServicesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="price">Price ($)</Label>
+                      <Label htmlFor="price">Price (₦)</Label>
                       <Input
                         id="price"
                         type="number"
                         min="0"
-                        step="0.01"
+                        step="1"
                         value={formData.price}
                         onChange={(e) => setFormData({ ...formData, price: Number.parseFloat(e.target.value) })}
-                        placeholder="0.00"
+                        placeholder="200000"
                         required
                       />
                     </div>
@@ -217,7 +218,7 @@ export default function AdminServicesPage() {
                         <CardTitle>{service.name}</CardTitle>
                         <div className="flex items-center gap-2 mt-2">
                           <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                            ${service.price}
+                            {formatPrice(service.price)}
                           </span>
                           <span className="text-xs text-muted-foreground">{service.duration}</span>
                           {!service.is_active && (

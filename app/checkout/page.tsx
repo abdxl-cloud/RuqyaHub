@@ -15,6 +15,7 @@ import { ShoppingBag } from "lucide-react"
 import Link from "next/link"
 import { apiClient } from "@/lib/api-client"
 import type { OrderCreate } from "@/lib/api-types"
+import { formatPrice } from "@/lib/utils"
 
 export default function CheckoutPage() {
   const { items, total, clearCart, itemCount } = useCart()
@@ -35,7 +36,7 @@ export default function CheckoutPage() {
     country: "",
   })
 
-  const shippingCost = 10
+  const shippingCost = 5000
   const finalTotal = total + shippingCost
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -305,10 +306,10 @@ export default function CheckoutPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm text-foreground truncate">{item.name}</p>
-                            <p className="text-sm text-muted-foreground">${item.price}</p>
+                            <p className="text-sm text-muted-foreground">{formatPrice(item.price)}</p>
                           </div>
                           <div className="text-sm font-semibold text-foreground">
-                            ${(item.price * item.quantity).toFixed(2)}
+                            {formatPrice(item.price * item.quantity)}
                           </div>
                         </div>
                       ))}
@@ -320,16 +321,16 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Subtotal ({itemCount} items)</span>
-                        <span className="font-medium">${total.toFixed(2)}</span>
+                        <span className="font-medium">{formatPrice(total)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Shipping</span>
-                        <span className="font-medium">${shippingCost.toFixed(2)}</span>
+                        <span className="font-medium">{formatPrice(shippingCost)}</span>
                       </div>
                       <Separator />
                       <div className="flex justify-between text-lg font-semibold">
                         <span>Total</span>
-                        <span className="text-primary">${finalTotal.toFixed(2)}</span>
+                        <span className="text-primary">{formatPrice(finalTotal)}</span>
                       </div>
                     </div>
 
