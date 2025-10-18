@@ -9,7 +9,7 @@ import type { Article, PaginatedResponse } from "@/lib/api-types"
 
 async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const article = await apiClient.get<Article>(`/articles/${slug}`)
+    const article = await apiClient.get<Article>(`/articles/slug/${slug}`)
     return article.is_published ? article : null
   } catch (error) {
     console.error("Failed to fetch article:", error)
