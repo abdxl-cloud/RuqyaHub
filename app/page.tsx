@@ -154,12 +154,10 @@ export default function HomePage() {
 
             {/* Scholarly Note */}
             <div className="max-w-4xl mx-auto px-4">
-              <div className="bg-primary/5 rounded-2xl p-10 md:p-12 border-l-4 border-primary shadow-sm">
-                <p className="text-foreground/90 leading-relaxed italic text-lg md:text-xl text-center">
-                  "It is from the consensus of scholars that the legalisation of Ruqyah is achieved when these three
-                  conditions are met."
-                </p>
-              </div>
+              <p className="text-foreground/80 leading-relaxed italic text-lg md:text-xl text-center border-l-4 border-primary pl-8">
+                "It is from the consensus of scholars that the legalisation of Ruqyah is achieved when these three
+                conditions are met."
+              </p>
             </div>
 
             {/* CTA */}
