@@ -62,35 +62,35 @@ def seed_services(db):
     
     services_data = [
         {
-            "name": "Spiritual & Health Diagnosis Consultation",
+            "title": "Spiritual & Health Diagnosis Consultation",
             "description": "Professional diagnosis of spiritual and health issues including Jinn possession, evil eye (Ayn), and black magic (Sihr). Comprehensive assessment with personalized solution recommendations and treatment plan.",
             "price": 10000.00,
             "duration": 60,
             "is_active": True
         },
         {
-            "name": "Counseling Services",
+            "title": "Counseling Services",
             "description": "Islamic counseling sessions to help you navigate life challenges with guidance from Qur'an and Sunnah. Addressing personal, family, and spiritual matters with compassion and Islamic wisdom.",
             "price": 15000.00,
             "duration": 45,
             "is_active": True
         },
         {
-            "name": "Marital Issues Consultation",
+            "title": "Marital Issues Consultation",
             "description": "Specialized Islamic counseling for married couples facing difficulties. Help resolve conflicts, improve communication, and strengthen your marriage according to Islamic principles. Confidential and compassionate support.",
             "price": 20000.00,
             "duration": 60,
             "is_active": True
         },
         {
-            "name": "Ruqyah Healing with Products",
+            "title": "Ruqyah Healing with Products",
             "description": "Complete Ruqyah healing session combined with blessed products package. Includes professional Ruqyah recitation, Ruqyah water, blessed oils, and treatment products. Comprehensive healing approach for maximum benefit.",
             "price": 50000.00,
             "duration": 90,
             "is_active": True
         },
         {
-            "name": "Questions & Advice Session",
+            "title": "Questions & Advice Session",
             "description": "Ask any questions about Ruqyah, Islamic healing, spiritual protection, or general Islamic guidance. Get expert advice and answers based on Qur'an and authentic Sunnah. Quick consultation for your concerns.",
             "price": 5000.00,
             "duration": 30,
@@ -99,7 +99,7 @@ def seed_services(db):
     ]
     
     for service_data in services_data:
-        existing = db.query(Service).filter(Service.name == service_data["name"]).first()
+        existing = db.query(Service).filter(Service.title == service_data["title"]).first()
         
         if not existing:
             service = Service(
@@ -184,7 +184,8 @@ def seed_articles(db):
             </ul>
             """,
             "category": "Education",
-            "featured_image": "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&q=80",
+            "author": "Ruqyah Healing Hub",
+            "read_time": 8,
             "is_published": True,
             "published_at": datetime.utcnow() - timedelta(days=5)
         },
@@ -272,7 +273,8 @@ def seed_articles(db):
             </ul>
             """,
             "category": "Protection",
-            "featured_image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80",
+            "author": "Ruqyah Healing Hub",
+            "read_time": 12,
             "is_published": True,
             "published_at": datetime.utcnow() - timedelta(days=3)
         },
@@ -338,7 +340,8 @@ def seed_articles(db):
             <p>The key is to ensure that all Ruqyah practices are firmly rooted in the Qur'an and authentic Sunnah, with complete reliance on Allah alone for healing and protection.</p>
             """,
             "category": "Education",
-            "featured_image": "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&q=80",
+            "author": "Ruqyah Healing Hub",
+            "read_time": 7,
             "is_published": True,
             "published_at": datetime.utcnow() - timedelta(days=2)
         },
@@ -466,7 +469,8 @@ def seed_articles(db):
             </blockquote>
             """,
             "category": "Education",
-            "featured_image": "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=800&q=80",
+            "author": "Ruqyah Healing Hub",
+            "read_time": 15,
             "is_published": True,
             "published_at": datetime.utcnow() - timedelta(days=1)
         }
@@ -763,3 +767,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
