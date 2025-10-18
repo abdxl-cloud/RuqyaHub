@@ -55,14 +55,14 @@ export default async function ServicesPage() {
   const services = await getServices()
 
   return (
-    <div className="min-h-screen py-16 md:py-20">
+    <div className="min-h-screen py-20 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center space-y-4 mb-12 md:mb-16">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-foreground text-balance">
+        <div className="text-center space-y-5 mb-16 md:mb-20">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-semibold text-foreground text-balance tracking-tight">
             Our Services
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed text-pretty">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed text-pretty">
             Comprehensive Islamic spiritual healing services tailored to your needs. All services are conducted
             according to authentic Qur'an and Sunnah.
           </p>
@@ -71,31 +71,35 @@ export default async function ServicesPage() {
         {/* Services Grid */}
         {services.length === 0 ? (
           <Card>
-            <CardContent className="p-12 text-center">
-              <p className="text-muted-foreground">No services available at the moment.</p>
+            <CardContent className="p-16 text-center">
+              <p className="text-muted-foreground text-lg">No services available at the moment.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {services.map((service) => {
-              // Get icon component from iconMap, default to Calendar
               const IconComponent = (service.icon && iconMap[service.icon]) || Calendar
 
               return (
-                <Card key={service.id} className="flex flex-col h-full hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <IconComponent className="h-6 w-6 text-primary" />
+                <Card
+                  key={service.id}
+                  className="flex flex-col h-full card-hover border-border/50 hover:border-primary/30 bg-card/50 backdrop-blur-sm"
+                >
+                  <CardHeader className="space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center shadow-sm">
+                      <IconComponent className="h-7 w-7 text-primary" />
                     </div>
-                    <CardTitle className="text-xl font-serif">{service.title}</CardTitle>
-                    <CardDescription className="text-base leading-relaxed">{service.description}</CardDescription>
+                    <CardTitle className="text-2xl font-serif leading-tight">{service.title}</CardTitle>
+                    <CardDescription className="text-base leading-relaxed text-pretty">
+                      {service.description}
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="mt-auto space-y-4">
-                    <div className="flex justify-between items-center text-sm">
+                  <CardContent className="mt-auto space-y-5">
+                    <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">{service.duration} minutes</span>
-                      <span className="font-semibold text-primary text-lg">${service.price}</span>
+                      <span className="font-bold text-primary text-2xl">${service.price}</span>
                     </div>
-                    <Button className="w-full" asChild>
+                    <Button className="w-full btn-primary-enhanced shadow-md hover:shadow-lg" asChild>
                       <Link href="#book">Book Now</Link>
                     </Button>
                   </CardContent>
@@ -106,17 +110,22 @@ export default async function ServicesPage() {
         )}
 
         {/* Booking Section */}
-        <section id="book" className="mt-16 md:mt-20 bg-card rounded-lg p-8 md:p-12 border border-border">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-serif font-semibold text-foreground">Ready to Begin?</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+        <section
+          id="book"
+          className="mt-20 md:mt-24 bg-muted/50 rounded-2xl p-10 md:p-14 border border-border/50 shadow-lg"
+        >
+          <div className="max-w-2xl mx-auto text-center space-y-7">
+            <h2 className="text-4xl md:text-5xl font-serif font-semibold text-foreground tracking-tight">
+              Ready to Begin?
+            </h2>
+            <p className="text-xl text-muted-foreground leading-relaxed text-pretty">
               Contact us to schedule your appointment or ask any questions about our services.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" asChild>
+              <Button size="lg" className="btn-primary-enhanced shadow-md hover:shadow-lg" asChild>
                 <Link href="mailto:info@ruqyahealinghub.com">Email Us</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" variant="outline" className="shadow-md hover:shadow-lg bg-background" asChild>
                 <Link href="tel:+15551234567">Call Us</Link>
               </Button>
             </div>

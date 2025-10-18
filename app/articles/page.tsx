@@ -50,32 +50,32 @@ export default async function ArticlesPage() {
   const articles = await getArticles()
 
   return (
-    <div className="min-h-screen py-16 md:py-20">
+    <div className="min-h-screen py-20 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center space-y-4 mb-12 md:mb-16">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-foreground text-balance">
+        <div className="text-center space-y-5 mb-16 md:mb-20">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-semibold text-foreground text-balance tracking-tight">
             Articles & Resources
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed text-pretty">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed text-pretty">
             Educational content about Islamic spiritual healing, Ruqya practices, and protection from spiritual harm.
           </p>
         </div>
 
         {/* Categories */}
-        <div className="mb-12 md:mb-16">
-          <h2 className="text-2xl md:text-3xl font-serif font-semibold text-foreground mb-6">Browse by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="mb-16 md:mb-20">
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-foreground mb-8">Browse by Category</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-5">
             {categories.map((category) => (
               <Link key={category.name} href={`#${category.name.toLowerCase().replace(/\s+/g, "-")}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
+                <Card className="h-full card-hover border-border/50 hover:border-primary/30 bg-card/50 backdrop-blur-sm">
                   <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
                     <div
-                      className={`w-12 h-12 rounded-full ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform`}
+                      className={`w-14 h-14 rounded-full ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}
                     >
-                      <category.icon className="h-6 w-6" />
+                      <category.icon className="h-7 w-7" />
                     </div>
-                    <span className="text-sm font-medium text-foreground">{category.name}</span>
+                    <span className="text-sm font-medium text-foreground leading-tight">{category.name}</span>
                   </CardContent>
                 </Card>
               </Link>
@@ -84,32 +84,43 @@ export default async function ArticlesPage() {
         </div>
 
         {/* Articles */}
-        <div className="space-y-6">
-          <h2 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">Latest Articles</h2>
+        <div className="space-y-8">
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-foreground">Latest Articles</h2>
           {articles.length === 0 ? (
             <Card>
-              <CardContent className="p-12 text-center">
-                <p className="text-muted-foreground">No articles available at the moment.</p>
+              <CardContent className="p-16 text-center">
+                <p className="text-muted-foreground text-lg">No articles available at the moment.</p>
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {articles.map((article) => (
                 <Link key={article.id} href={`/articles/${article.slug}`}>
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                    <CardHeader>
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="secondary">{article.category}</Badge>
+                  <Card className="h-full card-hover border-border/50 hover:border-primary/30 overflow-hidden bg-card/50 backdrop-blur-sm">
+                    <div className="article-image">
+                      <img
+                        src={`/.jpg?key=pjwyp&height=300&width=500&query=${encodeURIComponent(article.title)}`}
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <CardHeader className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary" className="font-medium">
+                          {article.category}
+                        </Badge>
                       </div>
-                      <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors">
+                      <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors leading-tight">
                         {article.title}
                       </CardTitle>
-                      <CardDescription className="text-base leading-relaxed">{article.excerpt}</CardDescription>
+                      <CardDescription className="text-base leading-relaxed line-clamp-2">
+                        {article.excerpt}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                        <span>{article.read_time} min read</span>
+                        <span className="font-medium">{article.read_time} min read</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -120,19 +131,22 @@ export default async function ArticlesPage() {
         </div>
 
         {/* Newsletter */}
-        <section className="mt-16 md:mt-20 bg-primary text-primary-foreground rounded-lg p-8 md:p-12">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-serif font-semibold">Stay Updated</h2>
-            <p className="text-lg text-primary-foreground/90 leading-relaxed">
+        <section className="mt-20 md:mt-24 bg-primary text-primary-foreground rounded-2xl p-10 md:p-14 shadow-xl relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 islamic-pattern"></div>
+          </div>
+          <div className="max-w-2xl mx-auto text-center space-y-7 relative z-10">
+            <h2 className="text-4xl md:text-5xl font-serif font-semibold tracking-tight">Stay Updated</h2>
+            <p className="text-xl text-primary-foreground/90 leading-relaxed text-pretty">
               Subscribe to our newsletter for the latest articles, Ruqya tips, and Islamic spiritual wellness guidance.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-md text-foreground bg-background border-0 focus:ring-2 focus:ring-accent"
+                className="flex-1 px-5 py-4 rounded-lg text-foreground bg-background border-0 focus:ring-2 focus:ring-accent shadow-md"
               />
-              <button className="px-6 py-3 bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-md transition-colors">
+              <button className="px-7 py-4 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
                 Subscribe
               </button>
             </div>
