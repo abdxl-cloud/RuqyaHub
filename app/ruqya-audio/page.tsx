@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 async function getAudio(): Promise<Audio[]> {
   try {
     const response = await apiClient.get<PaginatedResponse<Audio>>("/audio?skip=0&limit=100")
-    return response.items.filter((audio) => audio.is_active)
+    return response.items.filter((audio) => audio.is_published)
   } catch (error) {
     console.error("Failed to fetch audio:", error)
     return []
@@ -93,7 +93,7 @@ export default async function RuqyaAudioPage() {
                     </div>
                     <div className="flex justify-between">
                       <span>Duration:</span>
-                      <span className="font-medium text-foreground">{audio.duration}</span>
+                      <span className="font-medium text-foreground">{Math.floor(audio.duration / 60)} min</span>
                     </div>
                     {audio.category && (
                       <div className="flex justify-between">

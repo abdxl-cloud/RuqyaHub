@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 async function getPodcasts(): Promise<Podcast[]> {
   try {
     const response = await apiClient.get<PaginatedResponse<Podcast>>("/podcasts?skip=0&limit=100")
-    return response.items.filter((podcast) => podcast.is_active)
+    return response.items.filter((podcast) => podcast.is_published)
   } catch (error) {
     console.error("Failed to fetch podcasts:", error)
     return []
@@ -66,7 +66,8 @@ export default async function PodcastsPage() {
                   {/* Podcast Image */}
                   <div className="w-full md:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
                     <img
-                      src={podcast.cover_image || "/placeholder.svg?height=192&width=192&query=podcast cover"}
+                      // Updated to use cover_image_url instead of cover_image
+                      src={podcast.cover_image_url || "/placeholder.svg?height=192&width=192&query=podcast cover"}
                       alt={podcast.title}
                       className="w-full h-full object-cover"
                     />
@@ -82,7 +83,7 @@ export default async function PodcastsPage() {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span>{new Date(podcast.published_date).toLocaleDateString()}</span>
                       <span>•</span>
-                      <span>{podcast.duration}</span>
+                      <span>{Math.floor(podcast.duration / 60)} min</span>
                     </div>
 
                     <div className="flex gap-3">

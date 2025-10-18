@@ -1,17 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { 
-  Calendar, 
-  Video, 
-  Users, 
-  BookOpen, 
-  GraduationCap, 
-  MessageCircle,
-  Eye,
-  Shield,
-  Flame,
-  Home
-} from "lucide-react"
+import { Calendar, Video, Users, BookOpen, GraduationCap, MessageCircle, Eye, Shield, Flame, Home } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api-client"
@@ -50,16 +39,16 @@ async function getServices(): Promise<Service[]> {
 
 // Map icon strings to Lucide components
 const iconMap: Record<string, any> = {
-  "calendar": Calendar,
-  "video": Video,
-  "users": Users,
+  calendar: Calendar,
+  video: Video,
+  users: Users,
   "book-open": BookOpen,
   "graduation-cap": GraduationCap,
   "message-circle": MessageCircle,
-  "eye": Eye,
-  "shield": Shield,
-  "flame": Flame,
-  "home": Home,
+  eye: Eye,
+  shield: Shield,
+  flame: Flame,
+  home: Home,
 }
 
 export default async function ServicesPage() {
@@ -91,7 +80,7 @@ export default async function ServicesPage() {
             {services.map((service) => {
               // Get icon component from iconMap, default to Calendar
               const IconComponent = (service.icon && iconMap[service.icon]) || Calendar
-              
+
               return (
                 <Card key={service.id} className="flex flex-col h-full hover:shadow-lg transition-shadow">
                   <CardHeader>
