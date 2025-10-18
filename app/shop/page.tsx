@@ -85,18 +85,17 @@ export default function ShopPage() {
                 key={product.id}
                 className="flex flex-col h-full card-hover border-border/50 hover:border-primary/30 overflow-hidden bg-card/50 backdrop-blur-sm"
               >
-                <CardHeader className="p-0">
-                  <div className="product-image">
-                    <img
-                      src={
-                        product.image ||
-                        `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name) || "/placeholder.svg"}`
-                      }
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </CardHeader>
+                {product.image && (
+                  <CardHeader className="p-0">
+                    <div className="product-image">
+                      <img
+                        src={product.image || "/placeholder.svg"}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CardHeader>
+                )}
                 <CardContent className="flex-1 p-6 space-y-3">
                   <CardTitle className="text-xl font-serif leading-tight">{product.name}</CardTitle>
                   <CardDescription className="text-base leading-relaxed text-pretty">

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Instagram, Youtube, Mail } from "lucide-react"
 
 export function Footer() {
   return (
@@ -83,15 +83,9 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 mt-0.5 text-primary" />
-                <span>info@ruqyahealinghub.com</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <Phone className="h-4 w-4 mt-0.5 text-primary" />
-                <span>+1 (555) 123-4567</span>
-              </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 mt-0.5 text-primary" />
-                <span>123 Healing Way, City, State 12345</span>
+                <a href="mailto:contact@ruqyahealinghub.com" className="hover:text-primary transition-colors">
+                  contact@ruqyahealinghub.com
+                </a>
               </li>
             </ul>
             <div className="flex gap-3 pt-2">

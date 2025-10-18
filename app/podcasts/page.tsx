@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Spiritual Wellness Podcasts - Islamic Healing Discussions",
     description:
-      "Listen to insightful podcasts about Islamic spiritual healing, Ruqya practices, and maintaining spiritual wellness.",
+      "Listen to insightful discussions about Islamic spiritual healing, Ruqya practices, and maintaining spiritual wellness.",
     url: "/podcasts",
   },
 }
@@ -64,14 +64,15 @@ export default async function PodcastsPage() {
               <Card key={podcast.id} className="hover:shadow-lg transition-shadow">
                 <div className="flex flex-col md:flex-row gap-6 p-6">
                   {/* Podcast Image */}
-                  <div className="w-full md:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
-                    <img
-                      // Updated to use cover_image_url instead of cover_image
-                      src={podcast.cover_image_url || "/placeholder.svg?height=192&width=192&query=podcast cover"}
-                      alt={podcast.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {podcast.cover_image_url && (
+                    <div className="w-full md:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+                      <img
+                        src={podcast.cover_image_url || "/placeholder.svg"}
+                        alt={podcast.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
 
                   {/* Podcast Info */}
                   <div className="flex-1 space-y-4">
