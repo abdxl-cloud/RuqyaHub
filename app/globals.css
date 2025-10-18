@@ -3,76 +3,76 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Updated theme for Islamic Ruqya website with cream, white, emerald green, and gold accents */
+/* Updated to darker, more sophisticated color scheme with deep teal/navy */
 :root {
-  --background: oklch(0.98 0.01 85);
-  --foreground: oklch(0.25 0.02 120);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0.02 120);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.02 120);
-  --primary: oklch(0.45 0.15 165);
-  --primary-foreground: oklch(0.99 0.01 85);
-  --secondary: oklch(0.95 0.015 85);
-  --secondary-foreground: oklch(0.25 0.02 120);
-  --muted: oklch(0.96 0.01 85);
-  --muted-foreground: oklch(0.5 0.02 120);
-  --accent: oklch(0.65 0.12 85);
-  --accent-foreground: oklch(0.99 0.01 85);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.99 0.01 85);
-  --border: oklch(0.92 0.01 85);
-  --input: oklch(0.92 0.01 85);
-  --ring: oklch(0.45 0.15 165);
-  --chart-1: oklch(0.45 0.15 165);
-  --chart-2: oklch(0.65 0.12 85);
-  --chart-3: oklch(0.35 0.12 165);
-  --chart-4: oklch(0.55 0.1 85);
-  --chart-5: oklch(0.4 0.13 165);
+  --background: oklch(0.97 0.01 240);
+  --foreground: oklch(0.2 0.02 240);
+  --card: oklch(0.99 0.005 240);
+  --card-foreground: oklch(0.2 0.02 240);
+  --popover: oklch(0.99 0.005 240);
+  --popover-foreground: oklch(0.2 0.02 240);
+  --primary: oklch(0.35 0.08 220);
+  --primary-foreground: oklch(0.99 0.01 240);
+  --secondary: oklch(0.92 0.01 240);
+  --secondary-foreground: oklch(0.2 0.02 240);
+  --muted: oklch(0.94 0.01 240);
+  --muted-foreground: oklch(0.45 0.02 240);
+  --accent: oklch(0.4 0.06 200);
+  --accent-foreground: oklch(0.99 0.01 240);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(0.99 0.01 240);
+  --border: oklch(0.88 0.01 240);
+  --input: oklch(0.88 0.01 240);
+  --ring: oklch(0.35 0.08 220);
+  --chart-1: oklch(0.35 0.08 220);
+  --chart-2: oklch(0.4 0.06 200);
+  --chart-3: oklch(0.3 0.08 240);
+  --chart-4: oklch(0.45 0.06 210);
+  --chart-5: oklch(0.32 0.07 230);
   --radius: 0.5rem;
-  --sidebar: oklch(0.99 0.01 85);
-  --sidebar-foreground: oklch(0.25 0.02 120);
-  --sidebar-primary: oklch(0.45 0.15 165);
-  --sidebar-primary-foreground: oklch(0.99 0.01 85);
-  --sidebar-accent: oklch(0.95 0.015 85);
-  --sidebar-accent-foreground: oklch(0.25 0.02 120);
-  --sidebar-border: oklch(0.92 0.01 85);
-  --sidebar-ring: oklch(0.45 0.15 165);
+  --sidebar: oklch(0.97 0.01 240);
+  --sidebar-foreground: oklch(0.2 0.02 240);
+  --sidebar-primary: oklch(0.35 0.08 220);
+  --sidebar-primary-foreground: oklch(0.99 0.01 240);
+  --sidebar-accent: oklch(0.92 0.01 240);
+  --sidebar-accent-foreground: oklch(0.2 0.02 240);
+  --sidebar-border: oklch(0.88 0.01 240);
+  --sidebar-ring: oklch(0.35 0.08 220);
 }
 
 .dark {
-  --background: oklch(0.15 0.02 120);
-  --foreground: oklch(0.98 0.01 85);
-  --card: oklch(0.18 0.02 120);
-  --card-foreground: oklch(0.98 0.01 85);
-  --popover: oklch(0.18 0.02 120);
-  --popover-foreground: oklch(0.98 0.01 85);
-  --primary: oklch(0.55 0.15 165);
-  --primary-foreground: oklch(0.99 0.01 85);
-  --secondary: oklch(0.22 0.02 120);
-  --secondary-foreground: oklch(0.98 0.01 85);
-  --muted: oklch(0.22 0.02 120);
-  --muted-foreground: oklch(0.65 0.02 120);
-  --accent: oklch(0.65 0.12 85);
-  --accent-foreground: oklch(0.99 0.01 85);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.98 0.01 85);
-  --border: oklch(0.25 0.02 120);
-  --input: oklch(0.25 0.02 120);
-  --ring: oklch(0.55 0.15 165);
-  --chart-1: oklch(0.55 0.15 165);
-  --chart-2: oklch(0.65 0.12 85);
-  --chart-3: oklch(0.45 0.12 165);
-  --chart-4: oklch(0.6 0.1 85);
-  --chart-5: oklch(0.5 0.13 165);
-  --sidebar: oklch(0.18 0.02 120);
-  --sidebar-foreground: oklch(0.98 0.01 85);
-  --sidebar-primary: oklch(0.55 0.15 165);
-  --sidebar-primary-foreground: oklch(0.99 0.01 85);
-  --sidebar-accent: oklch(0.22 0.02 120);
-  --sidebar-accent-foreground: oklch(0.98 0.01 85);
-  --sidebar-border: oklch(0.25 0.02 120);
-  --sidebar-ring: oklch(0.55 0.15 165);
+  --background: oklch(0.12 0.02 240);
+  --foreground: oklch(0.95 0.01 240);
+  --card: oklch(0.15 0.02 240);
+  --card-foreground: oklch(0.95 0.01 240);
+  --popover: oklch(0.15 0.02 240);
+  --popover-foreground: oklch(0.95 0.01 240);
+  --primary: oklch(0.45 0.08 220);
+  --primary-foreground: oklch(0.99 0.01 240);
+  --secondary: oklch(0.2 0.02 240);
+  --secondary-foreground: oklch(0.95 0.01 240);
+  --muted: oklch(0.2 0.02 240);
+  --muted-foreground: oklch(0.6 0.02 240);
+  --accent: oklch(0.5 0.06 200);
+  --accent-foreground: oklch(0.99 0.01 240);
+  --destructive: oklch(0.4 0.15 25);
+  --destructive-foreground: oklch(0.95 0.01 240);
+  --border: oklch(0.22 0.02 240);
+  --input: oklch(0.22 0.02 240);
+  --ring: oklch(0.45 0.08 220);
+  --chart-1: oklch(0.45 0.08 220);
+  --chart-2: oklch(0.5 0.06 200);
+  --chart-3: oklch(0.4 0.08 240);
+  --chart-4: oklch(0.55 0.06 210);
+  --chart-5: oklch(0.42 0.07 230);
+  --sidebar: oklch(0.15 0.02 240);
+  --sidebar-foreground: oklch(0.95 0.01 240);
+  --sidebar-primary: oklch(0.45 0.08 220);
+  --sidebar-primary-foreground: oklch(0.99 0.01 240);
+  --sidebar-accent: oklch(0.2 0.02 240);
+  --sidebar-accent-foreground: oklch(0.95 0.01 240);
+  --sidebar-border: oklch(0.22 0.02 240);
+  --sidebar-ring: oklch(0.45 0.08 220);
 }
 
 /* Updated font variables to use Cormorant Garamond for serif and Inter for sans-serif */
@@ -126,23 +126,23 @@
   }
 }
 
-/* Enhanced Islamic geometric pattern with more depth */
+/* Updated Islamic pattern to use darker color scheme */
 .islamic-pattern {
-  background-color: oklch(0.98 0.01 85);
+  background-color: oklch(0.97 0.01 240);
   background-image: repeating-linear-gradient(
       45deg,
       transparent,
       transparent 35px,
-      oklch(0.45 0.15 165 / 0.04) 35px,
-      oklch(0.45 0.15 165 / 0.04) 70px
+      oklch(0.35 0.08 220 / 0.05) 35px,
+      oklch(0.35 0.08 220 / 0.05) 70px
     ),
     repeating-linear-gradient(
       -45deg,
       transparent,
       transparent 35px,
-      oklch(0.45 0.15 165 / 0.04) 35px,
-      oklch(0.45 0.15 165 / 0.04) 70px
-    ), radial-gradient(circle at 50% 50%, oklch(0.99 0.01 85), oklch(0.97 0.01 85));
+      oklch(0.35 0.08 220 / 0.05) 35px,
+      oklch(0.35 0.08 220 / 0.05) 70px
+    ), radial-gradient(circle at 50% 50%, oklch(0.98 0.01 240), oklch(0.96 0.01 240));
 }
 
 /* Improved smooth transitions with specific properties */
