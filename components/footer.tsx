@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Facebook, Instagram, Youtube, Mail } from "lucide-react"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -8,7 +9,16 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-serif font-semibold text-primary">Ruqya Healing</h3>
+            <div className="flex items-center gap-3">
+              <Image
+                src="/logo.jpg"
+                alt="Ruqya Healing Logo"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain"
+              />
+              <h3 className="text-2xl font-serif font-semibold text-primary">Ruqya Healing</h3>
+            </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Authentic Islamic healing through Qur'an and Sunnah. Providing spiritual guidance and support for the
               Muslim community.

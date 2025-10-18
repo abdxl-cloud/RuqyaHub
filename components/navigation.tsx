@@ -6,6 +6,7 @@ import { Menu, X, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/contexts/cart-context"
 import { usePathname } from "next/navigation"
+import Image from "next/image"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -89,7 +90,15 @@ export function Navigation() {
       <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-7xl">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <Image
+              src="/logo.jpg"
+              alt="Ruqya Healing Logo"
+              width={48}
+              height={48}
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+              priority
+            />
             <div className="text-xl sm:text-2xl md:text-3xl font-serif font-semibold text-primary">
               <span className="hidden sm:inline">Ruqya Healing</span>
               <span className="sm:hidden">RH</span>
