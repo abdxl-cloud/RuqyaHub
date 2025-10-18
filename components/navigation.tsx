@@ -96,7 +96,7 @@ export function Navigation() {
               alt="Ruqya Healing Logo"
               width={48}
               height={48}
-              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain mix-blend-multiply dark:mix-blend-screen"
               priority
             />
             <div className="text-xl sm:text-2xl md:text-3xl font-serif font-semibold text-primary">

@@ -15,7 +15,7 @@ export function Footer() {
                 alt="Ruqya Healing Logo"
                 width={40}
                 height={40}
-                className="w-10 h-10 object-contain"
+                className="w-10 h-10 object-contain mix-blend-multiply dark:mix-blend-screen"
               />
               <h3 className="text-2xl font-serif font-semibold text-primary">Ruqya Healing</h3>
             </div>
