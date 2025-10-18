@@ -1,130 +1,187 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { Eye, Heart, Zap, Ghost, FileText, Baby } from "lucide-react"
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api-client"
-import type { Article, PaginatedResponse } from "@/lib/api-types"
+import type { Article } from "@/lib/api-types"
+import { notFound } from "next/navigation"
 
-export const metadata: Metadata = {
-  title: "Articles & Resources - Islamic Spiritual Healing",
-  description:
-    "Educational articles about Islamic spiritual healing, Ruqya practices, protection from evil eye, black magic, jinn possession, and spiritual wellness guidance.",
-  keywords: [
-    "Ruqya articles",
-    "Islamic healing guide",
-    "evil eye protection",
-    "black magic cure",
-    "jinn possession",
-    "spiritual wellness",
-    "Islamic resources",
-  ],
-  openGraph: {
-    title: "Articles & Resources - Islamic Spiritual Healing",
-    description:
-      "Educational articles about Islamic spiritual healing, Ruqya practices, and protection from spiritual harm.",
-    url: "/articles",
-  },
+interface ArticlePageProps {
+  params: {
+    slug: string
+  }
 }
 
-async function getArticles(): Promise<Article[]> {
+async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const response = await apiClient.get<PaginatedResponse<Article>>("/articles?skip=0&limit=100")
-    return response.items.filter((article) => article.is_published)
+    const article = await apiClient.get<Article>(`/articles/slug/${slug}`)
+    return article
   } catch (error) {
-    console.error("Failed to fetch articles:", error)
+    console.error("Failed to fetch article:", error)
+    return null
+  }
+}
+
+async function getRelatedArticles(articleId: string): Promise<Article[]> {
+  try {
+    const related = await apiClient.get<Article[]>(`/articles/${articleId}/related?limit=3`)
+    return related
+  } catch (error) {
+    console.error("Failed to fetch related articles:", error)
     return []
   }
 }
 
-export default async function ArticlesPage() {
-  const categories = [
-    { name: "Evil Eye & Envy", icon: Eye, color: "bg-primary/10 text-primary" },
-    { name: "Black Magic", icon: Zap, color: "bg-primary/10 text-primary" },
-    { name: "Jinn Possession", icon: Ghost, color: "bg-primary/10 text-primary" },
-    { name: "Jinn 'Aashiq", icon: Heart, color: "bg-primary/10 text-primary" },
-    { name: "Taweez", icon: FileText, color: "bg-primary/10 text-primary" },
-    { name: "Ruqya for Children", icon: Baby, color: "bg-primary/10 text-primary" },
-  ]
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+  const article = await getArticle(params.slug)
 
-  const articles = await getArticles()
+  if (!article) {
+    return {
+      title: "Article Not Found",
+    }
+  }
+
+  return {
+    title: `${article.title} - RuqyaHub`,
+    description: article.excerpt || article.title,
+    keywords: [article.category, "Ruqya", "Islamic healing", "spiritual wellness"],
+    openGraph: {
+      title: article.title,
+      description: article.excerpt || article.title,
+      url: `/articles/${article.slug}`,
+      type: "article",
+      publishedTime: article.published_at || article.created_at,
+      authors: [article.author],
+    },
+  }
+}
+
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const article = await getArticle(params.slug)
+
+  if (!article) {
+    notFound()
+  }
+
+  const relatedArticles = await getRelatedArticles(article.id)
 
   return (
-    <div className="min-h-screen py-16 md:py-20">
+    <div className="min-h-screen py-12 md:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center space-y-4 mb-12 md:mb-16">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-foreground text-balance">
-            Articles & Resources
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed text-pretty">
-            Educational content about Islamic spiritual healing, Ruqya practices, and protection from spiritual harm.
-          </p>
-        </div>
+        {/* Back Button */}
+        <Link href="/articles">
+          <Button variant="ghost" className="mb-8">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Articles
+          </Button>
+        </Link>
 
-        {/* Categories */}
-        <div className="mb-12 md:mb-16">
-          <h2 className="text-2xl md:text-3xl font-serif font-semibold text-foreground mb-6">Browse by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((category) => (
-              <Link key={category.name} href={`#${category.name.toLowerCase().replace(/\s+/g, "-")}`}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-                    <div
-                      className={`w-12 h-12 rounded-full ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform`}
-                    >
-                      <category.icon className="h-6 w-6" />
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{category.name}</span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+        {/* Article Header */}
+        <article className="max-w-4xl mx-auto">
+          <div className="mb-8 space-y-4">
+            <Badge variant="secondary" className="mb-4">
+              {article.category}
+            </Badge>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-foreground leading-tight">
+              {article.title}
+            </h1>
+
+            {article.excerpt && (
+              <p className="text-xl text-muted-foreground leading-relaxed">{article.excerpt}</p>
+            )}
+
+            {/* Article Meta */}
+            <div className="flex flex-wrap items-center gap-6 pt-4 text-sm text-muted-foreground border-t border-border">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span>{article.author}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span>{new Date(article.created_at).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span>{article.read_time} min read</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Articles */}
-        <div className="space-y-6">
-          <h2 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">Latest Articles</h2>
-          {articles.length === 0 ? (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <p className="text-muted-foreground">No articles available at the moment.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {articles.map((article) => (
-                <Link key={article.id} href={`/articles/${article.slug}`}>
+          {/* Article Content */}
+          <div 
+            className="prose prose-lg prose-slate dark:prose-invert max-w-none
+                       prose-headings:font-serif prose-headings:font-semibold
+                       prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
+                       prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+                       prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-6
+                       prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                       prose-strong:text-foreground prose-strong:font-semibold
+                       prose-ul:my-6 prose-ol:my-6
+                       prose-li:text-foreground prose-li:my-2
+                       prose-blockquote:border-l-primary prose-blockquote:bg-muted/50 
+                       prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r
+                       prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+                       prose-pre:bg-muted prose-pre:border prose-pre:border-border"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+
+          {/* Share Section */}
+          <div className="mt-12 pt-8 border-t border-border">
+            <p className="text-sm text-muted-foreground text-center">
+              Found this article helpful? Share it with others who might benefit.
+            </p>
+          </div>
+        </article>
+
+        {/* Related Articles */}
+        {relatedArticles.length > 0 && (
+          <section className="max-w-6xl mx-auto mt-16 md:mt-20">
+            <h2 className="text-2xl md:text-3xl font-serif font-semibold text-foreground mb-8">
+              Related Articles
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedArticles.map((relatedArticle) => (
+                <Link key={relatedArticle.id} href={`/articles/${relatedArticle.slug}`}>
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
                     <CardHeader>
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="secondary">{article.category}</Badge>
-                      </div>
-                      <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors">
-                        {article.title}
+                      <Badge variant="secondary" className="mb-3 w-fit">
+                        {relatedArticle.category}
+                      </Badge>
+                      <CardTitle className="text-lg font-serif group-hover:text-primary transition-colors line-clamp-2">
+                        {relatedArticle.title}
                       </CardTitle>
-                      <CardDescription className="text-base leading-relaxed">{article.excerpt}</CardDescription>
+                      {relatedArticle.excerpt && (
+                        <CardDescription className="line-clamp-3">
+                          {relatedArticle.excerpt}
+                        </CardDescription>
+                      )}
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                        <span>{article.read_time} min read</span>
+                        <span>{relatedArticle.author}</span>
+                        <span>{relatedArticle.read_time} min</span>
                       </div>
                     </CardContent>
                   </Card>
                 </Link>
               ))}
             </div>
-          )}
-        </div>
+          </section>
+        )}
 
-        {/* Newsletter */}
-        <section className="mt-16 md:mt-20 bg-primary text-primary-foreground rounded-lg p-8 md:p-12">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
+        {/* Newsletter CTA */}
+        <section className="max-w-4xl mx-auto mt-16 md:mt-20 bg-primary text-primary-foreground rounded-lg p-8 md:p-12">
+          <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-serif font-semibold">Stay Updated</h2>
             <p className="text-lg text-primary-foreground/90 leading-relaxed">
-              Subscribe to our newsletter for the latest articles, Ruqya tips, and Islamic spiritual wellness guidance.
+              Subscribe to our newsletter for the latest articles on Islamic spiritual healing and Ruqya guidance.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
               <input

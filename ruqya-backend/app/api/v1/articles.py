@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 import uuid
 from slugify import slugify
+from datetime import datetime, timezone
 
 from app.database import get_db
 from app.models.article import Article
@@ -105,10 +106,19 @@ async def create_article(
         slug = f"{base_slug}-{counter}"
         counter += 1
     
+    # Create article data dict
+    article_dict = article_data.model_dump()
+    
+    # Set published_at if the article is being published
+    is_published = article_dict.get('is_published', False)
+    published_at = datetime.now(timezone.utc) if is_published else None
+    
     new_article = Article(
         id=str(uuid.uuid4()),
         slug=slug,
-        **article_data.model_dump()
+        is_published=is_published,
+        published_at=published_at,
+        **{k: v for k, v in article_dict.items() if k != 'is_published'}
     )
     
     db.add(new_article)
@@ -152,6 +162,16 @@ async def update_article(
         
         article.slug = slug
     
+    # Handle published_at when article is being published
+    if "is_published" in update_data:
+        if update_data["is_published"] and not article.is_published:
+            # Article is being published for the first time
+            article.published_at = datetime.now(timezone.utc)
+        elif not update_data["is_published"]:
+            # Article is being unpublished
+            article.published_at = None
+    
+    # Apply other updates
     for field, value in update_data.items():
         setattr(article, field, value)
     
@@ -159,6 +179,17 @@ async def update_article(
     db.refresh(article)
     
     return ArticleResponse.model_validate(article)
+
+
+@router.put("/{article_id}", response_model=ArticleResponse)
+async def replace_article(
+    article_id: str,
+    article_data: ArticleUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user)
+):
+    """Replace/update an article (Admin only). Alias for PATCH for compatibility."""
+    return await update_article(article_id, article_data, db, current_user)
 
 
 @router.delete("/{article_id}", status_code=status.HTTP_204_NO_CONTENT)
