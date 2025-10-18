@@ -42,7 +42,8 @@ export default function AdminArticlesPage() {
   const fetchArticles = async () => {
     try {
       // Fetch all articles including drafts for admin view
-      const response = await apiClient.get<PaginatedResponse<Article>>("/articles?skip=0&limit=100&is_published=", true)
+      // Don't pass is_published parameter to get both published and draft articles
+      const response = await apiClient.get<PaginatedResponse<Article>>("/articles?skip=0&limit=100", true)
       setArticles(response.items)
     } catch (error) {
       console.error("Failed to fetch articles:", error)

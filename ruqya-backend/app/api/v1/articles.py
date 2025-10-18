@@ -26,7 +26,7 @@ async def get_articles(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     category: Optional[str] = None,
-    is_published: Optional[bool] = Query(True),
+    is_published: Optional[bool] = Query(None),  # None means fetch all, True/False filters
     db: Session = Depends(get_db)
 ):
     """Get all articles with optional filtering."""
@@ -235,4 +235,3 @@ async def get_related_articles(
     ).limit(limit).all()
     
     return [ArticleRelatedResponse.model_validate(a) for a in related]
-    
