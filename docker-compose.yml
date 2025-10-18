@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-  # Next.js Frontend
+  # Next.js Frontend - PRODUCTION MODE
   frontend:
     build:
       context: .
@@ -68,17 +68,16 @@ services:
       - NEXT_PUBLIC_WS_URL=ws://194.163.145.31:8000/api/v1/chat/ws
       - NEXT_PUBLIC_APP_URL=http://194.163.145.31:3000
       - HOSTNAME=0.0.0.0
+      - NODE_ENV=production
     ports:
       - "3000:3000"
     depends_on:
       - backend
     restart: unless-stopped
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
-    command: pnpm dev --hostname 0.0.0.0 --port 3000  # Use dev mode
+    # REMOVED VOLUMES FOR PRODUCTION (no hot-reload needed)
+    # REMOVED COMMAND (uses Dockerfile CMD: pnpm start)
 
 volumes:
   postgres_data:
   backend_uploads:
+  
