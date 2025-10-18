@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
+# Remove or comment out TrustedHostMiddleware import
+# from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
@@ -44,21 +45,16 @@ app = FastAPI(
     title="Ruqya Healing Hub API",
     description="Backend API for Ruqya Healing Hub - Islamic Spiritual Healing Platform",
     version="1.0.0",
-    docs_url="/docs" if settings.ENVIRONMENT == "development" else None,
-    redoc_url="/redoc" if settings.ENVIRONMENT == "development" else None,
+    docs_url="/docs",  # Always enable
+    redoc_url="/redoc",  # Always enable
     lifespan=lifespan,
 )
 
 
-# CORS Middleware
+# CORS Middleware - Allow all origins for now
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        settings.FRONTEND_URL,
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=["*"],  # Allow all origins (be more restrictive in production)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,12 +62,13 @@ app.add_middleware(
 )
 
 
+# Remove TrustedHostMiddleware - it's causing the "Invalid host header" error
 # Trusted Host Middleware (Security)
-if settings.ENVIRONMENT == "production":
-    app.add_middleware(
-        TrustedHostMiddleware,
-        allowed_hosts=["*.ruqyahealinghub.com", "ruqyahealinghub.com"]
-    )
+# if settings.ENVIRONMENT == "production":
+#     app.add_middleware(
+#         TrustedHostMiddleware,
+#         allowed_hosts=["*.ruqyahealinghub.com", "ruqyahealinghub.com"]
+#     )
 
 
 # Request Timing Middleware

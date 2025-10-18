@@ -1,6 +1,17 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar, Video, Users, BookOpen, GraduationCap, MessageCircle } from "lucide-react"
+import { 
+  Calendar, 
+  Video, 
+  Users, 
+  BookOpen, 
+  GraduationCap, 
+  MessageCircle,
+  Eye,
+  Shield,
+  Flame,
+  Home
+} from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api-client"
@@ -37,13 +48,18 @@ async function getServices(): Promise<Service[]> {
   }
 }
 
+// Map icon strings to Lucide components
 const iconMap: Record<string, any> = {
-  Calendar,
-  Video,
-  Users,
-  BookOpen,
-  GraduationCap,
-  MessageCircle,
+  "calendar": Calendar,
+  "video": Video,
+  "users": Users,
+  "book-open": BookOpen,
+  "graduation-cap": GraduationCap,
+  "message-circle": MessageCircle,
+  "eye": Eye,
+  "shield": Shield,
+  "flame": Flame,
+  "home": Home,
 }
 
 export default async function ServicesPage() {
@@ -73,19 +89,21 @@ export default async function ServicesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {services.map((service) => {
-              const IconComponent = iconMap[service.name.split(" ")[0]] || Calendar
+              // Get icon component from iconMap, default to Calendar
+              const IconComponent = (service.icon && iconMap[service.icon]) || Calendar
+              
               return (
                 <Card key={service.id} className="flex flex-col h-full hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                       <IconComponent className="h-6 w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl font-serif">{service.name}</CardTitle>
+                    <CardTitle className="text-xl font-serif">{service.title}</CardTitle>
                     <CardDescription className="text-base leading-relaxed">{service.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="mt-auto space-y-4">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">{service.duration}</span>
+                      <span className="text-muted-foreground">{service.duration} minutes</span>
                       <span className="font-semibold text-primary text-lg">${service.price}</span>
                     </div>
                     <Button className="w-full" asChild>
