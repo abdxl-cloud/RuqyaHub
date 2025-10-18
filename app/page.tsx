@@ -93,20 +93,20 @@ export default function HomePage() {
       </section>
 
       {/* Ruqyah Shar'iyyah Section */}
-      <section className="py-20 md:py-28 bg-muted/20">
+      <section className="py-24 md:py-32 lg:py-40 bg-muted/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-20 md:space-y-28">
             {/* Header */}
-            <div className="text-center space-y-6 mb-20">
-              <h2 className="text-4xl md:text-5xl font-serif font-semibold text-foreground text-balance">
+            <div className="text-center space-y-8">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-foreground text-balance leading-tight">
                 Understanding Ruqyah Shar'iyyah
               </h2>
-              <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
+              <div className="w-32 h-1.5 bg-primary mx-auto rounded-full"></div>
             </div>
 
             {/* Definition */}
-            <div className="max-w-4xl mx-auto text-center space-y-6">
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+            <div className="max-w-4xl mx-auto text-center space-y-8 px-4">
+              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
                 Ruqyah Shar'iyyah is authentic Islamic spiritual healing that is{" "}
                 <span className="text-foreground font-semibold">free from any forms of shirk</span> (associating
                 partners with Allah) and revolves around recitation of the Qur'an, the use of authentic supplications
@@ -115,33 +115,37 @@ export default function HomePage() {
             </div>
 
             {/* Three Conditions Header */}
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <h3 className="text-3xl md:text-4xl font-serif font-semibold text-foreground">
+            <div className="max-w-3xl mx-auto text-center space-y-6 px-4">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-serif font-semibold text-foreground leading-tight">
                 Three Essential Conditions
               </h3>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
                 Ruqyah Shar'iyyah should meet 3 conditions as mentioned by the scholars, and it is from their consensus
                 that the legalisation of Ruqyah is achieved when the 3 conditions are met:
               </p>
             </div>
 
             {/* Conditions Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 px-4">
               {ruqyahConditions.map((condition) => (
                 <Card
                   key={condition.number}
                   className="border-2 border-primary/20 hover:border-primary/40 transition-all hover:shadow-lg"
                 >
-                  <CardContent className="p-8 space-y-4">
+                  <CardContent className="p-10 lg:p-12 space-y-6">
                     {/* Number Circle */}
-                    <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold shadow-md mx-auto">
+                    <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold shadow-md mx-auto">
                       {condition.number}
                     </div>
 
                     {/* Content */}
-                    <div className="text-center space-y-3">
-                      <h4 className="text-xl font-semibold text-foreground">{condition.title}</h4>
-                      <p className="text-muted-foreground leading-relaxed">{condition.description}</p>
+                    <div className="text-center space-y-4">
+                      <h4 className="text-xl md:text-2xl font-semibold text-foreground leading-tight">
+                        {condition.title}
+                      </h4>
+                      <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                        {condition.description}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -149,9 +153,9 @@ export default function HomePage() {
             </div>
 
             {/* Scholarly Note */}
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-primary/5 rounded-xl p-8 border-l-4 border-primary shadow-sm">
-                <p className="text-foreground/90 leading-relaxed italic text-lg text-center">
+            <div className="max-w-4xl mx-auto px-4">
+              <div className="bg-primary/5 rounded-2xl p-10 md:p-12 border-l-4 border-primary shadow-sm">
+                <p className="text-foreground/90 leading-relaxed italic text-lg md:text-xl text-center">
                   "It is from the consensus of scholars that the legalisation of Ruqyah is achieved when these three
                   conditions are met."
                 </p>
@@ -159,8 +163,8 @@ export default function HomePage() {
             </div>
 
             {/* CTA */}
-            <div className="text-center pt-4">
-              <Button asChild size="lg" className="shadow-lg">
+            <div className="text-center pt-8">
+              <Button asChild size="lg" className="shadow-lg text-base md:text-lg px-8 py-6">
                 <Link href="/articles">Learn More About Islamic Healing</Link>
               </Button>
             </div>
