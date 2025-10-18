@@ -1,10 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { Eye, Heart, Zap, Ghost, FileText, Baby } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import type { Metadata } from "next"
 import { apiClient } from "@/lib/api-client"
 import type { Article, PaginatedResponse } from "@/lib/api-types"
+import { ArticlesClient } from "@/components/articles-client"
 
 export const metadata: Metadata = {
   title: "Articles & Resources - Islamic Spiritual Healing",
@@ -38,15 +36,6 @@ async function getArticles(): Promise<Article[]> {
 }
 
 export default async function ArticlesPage() {
-  const categories = [
-    { name: "Evil Eye & Envy", icon: Eye, color: "bg-primary/10 text-primary" },
-    { name: "Black Magic", icon: Zap, color: "bg-primary/10 text-primary" },
-    { name: "Jinn Possession", icon: Ghost, color: "bg-primary/10 text-primary" },
-    { name: "Jinn 'Aashiq", icon: Heart, color: "bg-primary/10 text-primary" },
-    { name: "Taweez", icon: FileText, color: "bg-primary/10 text-primary" },
-    { name: "Ruqya for Children", icon: Baby, color: "bg-primary/10 text-primary" },
-  ]
-
   const articles = await getArticles()
 
   return (
@@ -62,73 +51,16 @@ export default async function ArticlesPage() {
           </p>
         </div>
 
-        {/* Categories */}
-        <div className="mb-16 md:mb-20">
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-foreground mb-8">Browse by Category</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-5">
-            {categories.map((category) => (
-              <Link key={category.name} href={`#${category.name.toLowerCase().replace(/\s+/g, "-")}`}>
-                <Card className="h-full card-hover border-border/50 hover:border-primary/30 bg-card/50 backdrop-blur-sm">
-                  <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
-                    <div
-                      className={`w-14 h-14 rounded-full ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}
-                    >
-                      <category.icon className="h-7 w-7" />
-                    </div>
-                    <span className="text-sm font-medium text-foreground leading-tight">{category.name}</span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
-
         {/* Articles */}
-        <div className="space-y-8">
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-foreground">Latest Articles</h2>
-          {articles.length === 0 ? (
-            <Card>
-              <CardContent className="p-16 text-center">
-                <p className="text-muted-foreground text-lg">No articles available at the moment.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {articles.map((article) => (
-                <Link key={article.id} href={`/articles/${article.slug}`}>
-                  <Card className="h-full card-hover border-border/50 hover:border-primary/30 overflow-hidden bg-card/50 backdrop-blur-sm">
-                    <div className="article-image">
-                      <img
-                        src={`/.jpg?key=pjwyp&height=300&width=500&query=${encodeURIComponent(article.title)}`}
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <CardHeader className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="font-medium">
-                          {article.category}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors leading-tight">
-                        {article.title}
-                      </CardTitle>
-                      <CardDescription className="text-base leading-relaxed line-clamp-2">
-                        {article.excerpt}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                        <span className="font-medium">{article.read_time} min read</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+        {articles.length === 0 ? (
+          <Card>
+            <CardContent className="p-16 text-center">
+              <p className="text-muted-foreground text-lg">No articles available at the moment.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <ArticlesClient articles={articles} />
+        )}
 
         {/* Newsletter */}
         <section className="mt-20 md:mt-24 bg-primary text-primary-foreground rounded-2xl p-10 md:p-14 shadow-xl relative overflow-hidden">
