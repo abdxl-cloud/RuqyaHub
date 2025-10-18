@@ -89,53 +89,116 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 md:py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center space-y-5 mb-16">
-              <h2 className="text-4xl md:text-5xl font-serif font-semibold text-foreground text-balance tracking-tight">
+      <section className="py-20 md:py-28 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">
+        {/* Decorative background pattern */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div className="absolute inset-0 islamic-pattern"></div>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center space-y-5 mb-16 md:mb-20">
+              <div className="inline-block px-4 py-2 bg-primary/10 rounded-full mb-4">
+                <span className="text-sm font-semibold text-primary uppercase tracking-wider">Authentic Healing</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-foreground text-balance tracking-tight">
                 What is Ruqyah Shar'iyyah?
               </h2>
-              <div className="max-w-3xl mx-auto space-y-6">
-                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed text-pretty">
-                  Ruqyah Shar'iyyah is authentic Islamic spiritual healing that is free from any forms of shirk
-                  (associating partners with Allah) and revolves around recitation of the Qur'an, the use of authentic
-                  supplications and the seeking of assistance and refuge in Allah (SWT) alone.
-                </p>
-              </div>
             </div>
 
-            <Card className="border-2 border-primary/20 bg-card/50 backdrop-blur-sm shadow-lg">
-              <CardContent className="p-8 md:p-12">
-                <h3 className="text-2xl md:text-3xl font-serif font-semibold text-foreground mb-8 text-center">
-                  Three Conditions of Authentic Ruqyah
-                </h3>
-                <p className="text-muted-foreground text-center mb-10 text-lg leading-relaxed">
-                  According to Islamic scholars, legitimate Ruqyah must meet these three conditions:
-                </p>
+            {/* Two Column Layout */}
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+              {/* Left Column - Description */}
+              <div className="space-y-8">
+                <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-xl">
+                  <CardContent className="p-8 md:p-10 space-y-6">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+                      <Shield className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">Free from Shirk</h3>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      Ruqyah Shar'iyyah is authentic Islamic spiritual healing that is{" "}
+                      <strong className="text-foreground">free from any forms of shirk</strong> (associating partners
+                      with Allah) and revolves around:
+                    </p>
+                    <ul className="space-y-4 text-muted-foreground">
+                      <li className="flex gap-3">
+                        <CheckCircle2 className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-lg leading-relaxed">Recitation of the Qur'an</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <CheckCircle2 className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-lg leading-relaxed">Use of authentic supplications</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <CheckCircle2 className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-lg leading-relaxed">
+                          Seeking assistance and refuge in Allah (SWT) alone
+                        </span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
 
-                <div className="space-y-8">
-                  {ruqyahConditions.map((condition, index) => (
-                    <div key={index} className="flex gap-6 items-start group">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <CheckCircle2 className="h-6 w-6 text-primary" />
-                      </div>
-                      <div className="flex-1 space-y-2 pt-1">
-                        <h4 className="text-xl font-semibold text-foreground">{condition.title}</h4>
-                        <p className="text-muted-foreground leading-relaxed text-lg">{condition.description}</p>
+                {/* Scholarly Consensus Quote */}
+                <Card className="border-l-4 border-l-primary bg-primary/5 backdrop-blur-sm">
+                  <CardContent className="p-6 md:p-8">
+                    <div className="flex gap-4">
+                      <div className="text-6xl text-primary/20 font-serif leading-none">"</div>
+                      <div className="space-y-3">
+                        <p className="text-lg text-foreground/90 leading-relaxed italic">
+                          It is from the consensus of scholars that the legalisation of Ruqyah is achieved when these
+                          three conditions are met.
+                        </p>
+                        <p className="text-sm text-muted-foreground font-semibold">— Islamic Scholars</p>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </CardContent>
+                </Card>
+              </div>
 
-                <div className="mt-10 p-6 bg-primary/5 rounded-lg border border-primary/10">
-                  <p className="text-muted-foreground text-center leading-relaxed italic">
-                    "It is from the consensus of scholars that the legalisation of Ruqyah is achieved when these three
-                    conditions are met."
-                  </p>
+              {/* Right Column - Three Conditions */}
+              <div className="space-y-6">
+                <div className="sticky top-24">
+                  <h3 className="text-2xl md:text-3xl font-serif font-semibold text-foreground mb-8 text-center lg:text-left">
+                    Three Essential Conditions
+                  </h3>
+
+                  <div className="space-y-6">
+                    {ruqyahConditions.map((condition, index) => (
+                      <Card
+                        key={index}
+                        className="group border-2 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 card-hover"
+                      >
+                        <CardContent className="p-6 md:p-8">
+                          <div className="flex gap-5 items-start">
+                            {/* Number Badge */}
+                            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                              <span className="text-xl font-bold text-primary-foreground">{index + 1}</span>
+                            </div>
+
+                            <div className="flex-1 space-y-3">
+                              <h4 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                                {condition.title}
+                              </h4>
+                              <p className="text-muted-foreground leading-relaxed">{condition.description}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {/* Call to Action */}
+                  <div className="mt-8 text-center lg:text-left">
+                    <Button asChild size="lg" className="btn-primary-enhanced shadow-lg">
+                      <Link href="/articles">Learn More About Ruqyah</Link>
+                    </Button>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>
