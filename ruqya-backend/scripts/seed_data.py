@@ -120,7 +120,6 @@ def seed_articles(db):
             "title": "Jinn in the Qur'an",
             "slug": "jinn-in-the-quran",
             "excerpt": "Understanding Jinn from the Qur'anic perspective - their creation, nature, and the Islamic definition of these unseen beings.",
-            "image": "https://images.pexels.com/photos/8111831/pexels-photo-8111831.jpeg?auto=compress&cs=tinysrgb&w=1200",
             "content": """
             <h2>JINN IN THE QUR'AN</h2>
             
@@ -194,7 +193,6 @@ def seed_articles(db):
             "title": "Evil Eye & Envy (Ayn & Hasad)",
             "slug": "evil-eye-envy-ayn-hasad",
             "excerpt": "Comprehensive guide to understanding the Evil Eye (Ayn) and Envy (Hasad) in Islam, their different types, and protection methods.",
-            "image": "https://images.pexels.com/photos/4021808/pexels-photo-4021808.jpeg?auto=compress&cs=tinysrgb&w=1200",
             "content": """
             <h2>EVIL EYE & ENVY (AYN & HASAD)</h2>
             
@@ -284,7 +282,6 @@ def seed_articles(db):
             "title": "Evidence for Ruqyah in Hadith",
             "slug": "evidence-ruqyah-hadith",
             "excerpt": "Understanding the prophetic evidence and Islamic rulings regarding Ruqyah from the Sunnah of Prophet Muhammad ﷺ.",
-            "image": "https://images.pexels.com/photos/6298998/pexels-photo-6298998.jpeg?auto=compress&cs=tinysrgb&w=1200",
             "content": """
             <h2>EVIDENCE IN HADITH</h2>
             
@@ -352,7 +349,6 @@ def seed_articles(db):
             "title": "Types of Ruqyah: Shar'iyyah vs Shirk'iyyah",
             "slug": "types-of-ruqyah",
             "excerpt": "Understanding the difference between permissible Islamic Ruqyah and forbidden practices that involve shirk.",
-            "image": "https://images.pexels.com/photos/8111832/pexels-photo-8111832.jpeg?auto=compress&cs=tinysrgb&w=1200",
             "content": """
             <h2>TYPES OF RUQYAH</h2>
             
