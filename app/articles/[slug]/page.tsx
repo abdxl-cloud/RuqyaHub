@@ -10,7 +10,7 @@ import type { Article, PaginatedResponse } from "@/lib/api-types"
 async function getArticle(slug: string): Promise<Article | null> {
   try {
     const article = await apiClient.get<Article>(`/articles/${slug}`)
-    return article.published ? article : null
+    return article.is_published ? article : null
   } catch (error) {
     console.error("Failed to fetch article:", error)
     return null
@@ -20,7 +20,7 @@ async function getArticle(slug: string): Promise<Article | null> {
 async function getRelatedArticles(category: string, currentId: string): Promise<Article[]> {
   try {
     const response = await apiClient.get<PaginatedResponse<Article>>(`/articles?category=${category}&skip=0&limit=4`)
-    return response.items.filter((article) => article.id !== currentId && article.published).slice(0, 3)
+    return response.items.filter((article) => article.id !== currentId && article.is_published).slice(0, 3)
   } catch (error) {
     console.error("Failed to fetch related articles:", error)
     return []
@@ -85,7 +85,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <span>{article.read_time}</span>
+                <span>{article.read_time} min read</span>
               </div>
               <Button variant="ghost" size="sm" className="ml-auto">
                 <Share2 className="h-4 w-4 mr-2" />
@@ -133,7 +133,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                     <CardContent>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <span>{new Date(relatedArticle.created_at).toLocaleDateString()}</span>
-                        <span>{relatedArticle.read_time}</span>
+                        <span>{relatedArticle.read_time} min read</span>
                       </div>
                     </CardContent>
                   </Card>

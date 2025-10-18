@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Play, Download, Volume2 } from "lucide-react"
 import type { Metadata } from "next"
+import { apiClient } from "@/lib/api-client"
+import type { Audio, PaginatedResponse } from "@/lib/api-types"
 
 export const metadata: Metadata = {
   title: "Ruqya Audio Library - Authentic Islamic Recitations",
@@ -23,81 +25,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RuqyaAudioPage() {
-  const audioCategories = [
-    {
-      title: "Complete Ruqya Recitation",
-      description: "Full Ruqya session with all essential verses and supplications",
-      duration: "1:45:30",
-      reciter: "Sheikh Ahmad Al-Ajmi",
-    },
-    {
-      title: "Ayat Al-Kursi (100x)",
-      description: "The Throne Verse repeated 100 times for powerful protection",
-      duration: "45:20",
-      reciter: "Sheikh Mishary Rashid",
-    },
-    {
-      title: "Surah Al-Baqarah",
-      description: "Complete recitation of Surah Al-Baqarah for home protection",
-      duration: "2:15:45",
-      reciter: "Sheikh Maher Al-Muaiqly",
-    },
-    {
-      title: "Last Three Surahs (100x)",
-      description: "Al-Ikhlas, Al-Falaq, and An-Nas repeated for protection",
-      duration: "52:10",
-      reciter: "Sheikh Saad Al-Ghamdi",
-    },
-    {
-      title: "Ruqya for Evil Eye",
-      description: "Specific verses and duas for treating the evil eye",
-      duration: "38:25",
-      reciter: "Sheikh Yasser Al-Dosari",
-    },
-    {
-      title: "Ruqya for Black Magic",
-      description: "Powerful recitation targeting sihr and black magic",
-      duration: "1:12:30",
-      reciter: "Sheikh Ahmad Al-Ajmi",
-    },
-    {
-      title: "Ruqya for Jinn Possession",
-      description: "Verses specifically for treating jinn possession",
-      duration: "58:40",
-      reciter: "Sheikh Mishary Rashid",
-    },
-    {
-      title: "Morning Adhkar",
-      description: "Morning remembrance and protection supplications",
-      duration: "25:15",
-      reciter: "Sheikh Maher Al-Muaiqly",
-    },
-    {
-      title: "Evening Adhkar",
-      description: "Evening remembrance and protection supplications",
-      duration: "28:30",
-      reciter: "Sheikh Saad Al-Ghamdi",
-    },
-    {
-      title: "Ruqya for Children",
-      description: "Gentle Ruqya recitation suitable for children",
-      duration: "35:20",
-      reciter: "Sheikh Yasser Al-Dosari",
-    },
-    {
-      title: "Ruqya for Sleep",
-      description: "Calming recitation to help with sleep and nightmares",
-      duration: "42:15",
-      reciter: "Sheikh Ahmad Al-Ajmi",
-    },
-    {
-      title: "Prophetic Supplications",
-      description: "Authentic duas from the Prophet ﷺ for healing",
-      duration: "31:45",
-      reciter: "Sheikh Mishary Rashid",
-    },
-  ]
+async function getAudio(): Promise<Audio[]> {
+  try {
+    const response = await apiClient.get<PaginatedResponse<Audio>>("/audio?skip=0&limit=100")
+    return response.items.filter((audio) => audio.is_published)
+  } catch (error) {
+    console.error("Failed to fetch audio:", error)
+    return []
+  }
+}
+
+export default async function RuqyaAudioPage() {
+  const audioCategories = await getAudio()
 
   return (
     <div className="min-h-screen py-16 md:py-20">
@@ -129,40 +68,54 @@ export default function RuqyaAudioPage() {
         </div>
 
         {/* Audio Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {audioCategories.map((audio, index) => (
-            <Card key={index} className="flex flex-col h-full hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Volume2 className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-xl font-serif">{audio.title}</CardTitle>
-                <CardDescription className="text-base leading-relaxed">{audio.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="mt-auto space-y-4">
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  <div className="flex justify-between">
-                    <span>Reciter:</span>
-                    <span className="font-medium text-foreground">{audio.reciter}</span>
+        {audioCategories.length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <p className="text-muted-foreground">No audio recitations available at the moment.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {audioCategories.map((audio) => (
+              <Card key={audio.id} className="flex flex-col h-full hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <Volume2 className="h-8 w-8 text-primary" />
                   </div>
-                  <div className="flex justify-between">
-                    <span>Duration:</span>
-                    <span className="font-medium text-foreground">{audio.duration}</span>
+                  <CardTitle className="text-xl font-serif">{audio.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">{audio.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="mt-auto space-y-4">
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>Reciter:</span>
+                      <span className="font-medium text-foreground">{audio.reciter}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Duration:</span>
+                      <span className="font-medium text-foreground">{Math.floor(audio.duration / 60)} min</span>
+                    </div>
+                    {audio.category && (
+                      <div className="flex justify-between">
+                        <span>Category:</span>
+                        <span className="font-medium text-foreground">{audio.category}</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button className="flex-1">
-                    <Play className="h-4 w-4 mr-2" />
-                    Play
-                  </Button>
-                  <Button variant="outline" size="icon">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div className="flex gap-2">
+                    <Button className="flex-1">
+                      <Play className="h-4 w-4 mr-2" />
+                      Play
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Guidelines Section */}
         <section className="mt-16 md:mt-20 bg-card rounded-lg p-8 md:p-12 border border-border">

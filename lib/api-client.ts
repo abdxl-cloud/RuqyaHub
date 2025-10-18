@@ -1,4 +1,18 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+// Determine if we're on server or client side
+const isServer = typeof window === 'undefined';
+
+// Use different URLs for server-side vs client-side
+const API_URL = isServer 
+  ? (process.env.API_URL || 'http://ruqya_backend:8000')  // Server-side: Docker network
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000');  // Client-side: Public IP
+
+// Log for debugging
+if (process.env.NODE_ENV !== 'production') {
+  console.log('[API Client] Configuration:', {
+    isServer,
+    API_URL,
+  });
+}
 
 export interface ApiError {
   detail: string

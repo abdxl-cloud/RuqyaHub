@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 async function getArticles(): Promise<Article[]> {
   try {
     const response = await apiClient.get<PaginatedResponse<Article>>("/articles?skip=0&limit=100")
-    return response.items.filter((article) => article.published)
+    return response.items.filter((article) => article.is_published)
   } catch (error) {
     console.error("Failed to fetch articles:", error)
     return []
@@ -109,7 +109,7 @@ export default async function ArticlesPage() {
                     <CardContent>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                        <span>{article.read_time}</span>
+                        <span>{article.read_time} min read</span>
                       </div>
                     </CardContent>
                   </Card>

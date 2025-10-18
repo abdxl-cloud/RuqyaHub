@@ -409,4 +409,3 @@ info: ## Show project information
 	@echo "  • make stop        - Stop services"
 	@echo "  • make fix-docker  - Fix Docker conflicts"
 	@echo ""
-	

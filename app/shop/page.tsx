@@ -22,7 +22,7 @@ export default function ShopPage() {
   const fetchProducts = async () => {
     try {
       const response = await apiClient.get<PaginatedResponse<Product>>("/products?skip=0&limit=100")
-      setProducts(response.items.filter((p) => p.is_active && p.stock > 0))
+      setProducts(response.items.filter((p) => p.is_active && p.stock_quantity > 0))
     } catch (error) {
       console.error("Failed to fetch products:", error)
       toast({ title: "Failed to load products", variant: "destructive" })
@@ -36,7 +36,7 @@ export default function ShopPage() {
       id: Number.parseInt(product.id),
       name: product.name,
       price: product.price,
-      image: product.image_url,
+      image: product.image,
     })
     toast({
       title: "Added to cart",
@@ -93,15 +93,15 @@ export default function ShopPage() {
                 <CardContent className="flex-1 p-6 space-y-2">
                   <CardTitle className="text-xl font-serif">{product.name}</CardTitle>
                   <CardDescription className="text-base leading-relaxed">{product.description}</CardDescription>
-                  {product.stock < 10 && product.stock > 0 && (
-                    <p className="text-sm text-amber-600">Only {product.stock} left in stock</p>
+                  {product.stock_quantity < 10 && product.stock_quantity > 0 && (
+                    <p className="text-sm text-amber-600">Only {product.stock_quantity} left in stock</p>
                   )}
                 </CardContent>
                 <CardFooter className="p-6 pt-0 flex items-center justify-between">
                   <span className="text-2xl font-semibold text-primary">${product.price}</span>
-                  <Button onClick={() => handleAddToCart(product)} disabled={product.stock === 0}>
+                  <Button onClick={() => handleAddToCart(product)} disabled={product.stock_quantity === 0}>
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                    {product.stock_quantity === 0 ? "Out of Stock" : "Add to Cart"}
                   </Button>
                 </CardFooter>
               </Card>
