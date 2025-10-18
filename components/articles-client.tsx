@@ -99,29 +99,22 @@ export function ArticlesClient({ articles }: ArticlesClientProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {filteredArticles.map((article) => (
               <Link key={article.id} href={`/articles/${article.slug}`}>
-                <Card className="h-full card-hover border-border/50 hover:border-primary/30 overflow-hidden bg-card/50 backdrop-blur-sm">
-                  <div className="article-image">
-                    <img
-                      src={`/.jpg?key=pjwyp&height=300&width=500&query=${encodeURIComponent(article.title)}`}
-                      alt={article.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <CardHeader className="space-y-3">
+                <Card className="h-full card-hover border-border/50 hover:border-primary/30 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="space-y-4 pb-4">
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="font-medium">
                         {article.category}
                       </Badge>
                     </div>
-                    <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors leading-tight">
+                    <CardTitle className="text-2xl font-serif group-hover:text-primary transition-colors leading-tight">
                       {article.title}
                     </CardTitle>
-                    <CardDescription className="text-base leading-relaxed line-clamp-2">
+                    <CardDescription className="text-base leading-relaxed line-clamp-3">
                       {article.excerpt}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t border-border/50">
                       <span>{new Date(article.created_at).toLocaleDateString()}</span>
                       <span className="font-medium">{article.read_time} min read</span>
                     </div>

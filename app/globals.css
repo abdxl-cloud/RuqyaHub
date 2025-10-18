@@ -166,10 +166,6 @@
   @apply aspect-square object-cover bg-gradient-to-br from-muted to-muted/50;
 }
 
-.article-image {
-  @apply aspect-video object-cover bg-gradient-to-br from-muted to-muted/50;
-}
-
 /* Improved text readability */
 .prose-enhanced {
   @apply leading-relaxed text-pretty;
