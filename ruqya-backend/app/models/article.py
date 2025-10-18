@@ -14,6 +14,7 @@ class Article(Base):
     category = Column(String, nullable=False, index=True)
     author = Column(String, nullable=False)
     read_time = Column(Integer, nullable=False)  # in minutes
+    image = Column(String, nullable=True)  # URL to article image
     is_published = Column(Boolean, default=False, nullable=False)
     published_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

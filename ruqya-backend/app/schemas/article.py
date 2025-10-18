@@ -10,6 +10,7 @@ class ArticleBase(BaseModel):
     category: str = Field(..., min_length=1, max_length=100)
     author: str = Field(..., min_length=1, max_length=200)
     read_time: int = Field(..., gt=0, description="Reading time in minutes")
+    image: Optional[str] = Field(None, description="URL to article cover image")
 
 
 class ArticleCreate(ArticleBase):
@@ -25,6 +26,7 @@ class ArticleUpdate(BaseModel):
     category: Optional[str] = Field(None, min_length=1, max_length=100)
     author: Optional[str] = Field(None, min_length=1, max_length=200)
     read_time: Optional[int] = Field(None, gt=0)
+    image: Optional[str] = None
     is_published: Optional[bool] = None
 
 
@@ -49,6 +51,7 @@ class ArticleSummaryResponse(BaseModel):
     category: str
     author: str
     read_time: int
+    image: Optional[str] = None
     is_published: bool
     published_at: Optional[datetime] = None
     created_at: datetime
@@ -69,5 +72,6 @@ class ArticleRelatedResponse(BaseModel):
     slug: str
     excerpt: Optional[str] = None
     category: str
+    image: Optional[str] = None
     
     model_config = ConfigDict(from_attributes=True)
