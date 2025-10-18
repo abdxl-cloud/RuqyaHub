@@ -91,8 +91,8 @@ export function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="text-xl sm:text-2xl md:text-3xl font-serif font-semibold text-primary">
-              <span className="hidden sm:inline">Ruqya Healing Hub</span>
-              <span className="sm:hidden">RHH</span>
+              <span className="hidden sm:inline">Ruqya Healing</span>
+              <span className="sm:hidden">RH</span>
             </div>
           </Link>
 

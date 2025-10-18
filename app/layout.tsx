@@ -26,8 +26,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://ruqyahub.vercel.app"),
   title: {
-    default: "Ruqya Healing Hub - Healing through Qur'an and Sunnah",
-    template: "%s | Ruqya Healing Hub",
+    default: "Ruqya Healing - Healing through Qur'an and Sunnah",
+    template: "%s | Ruqya Healing",
   },
   description:
     "Authentic Islamic Ruqya services, consultations, and spiritual healing resources. Expert guidance for protection against evil eye, black magic, and jinn possession through Qur'an and Sunnah.",
@@ -42,9 +42,9 @@ export const metadata: Metadata = {
     "Islamic consultation",
     "Ruqya services",
   ],
-  authors: [{ name: "Ruqya Healing Hub" }],
-  creator: "Ruqya Healing Hub",
-  publisher: "Ruqya Healing Hub",
+  authors: [{ name: "Ruqya Healing" }],
+  creator: "Ruqya Healing",
+  publisher: "Ruqya Healing",
   formatDetection: {
     email: false,
     address: false,
@@ -54,8 +54,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://ruqyahub.vercel.app",
-    siteName: "Ruqya Healing Hub",
-    title: "Ruqya Healing Hub - Healing through Qur'an and Sunnah",
+    siteName: "Ruqya Healing",
+    title: "Ruqya Healing - Healing through Qur'an and Sunnah",
     description:
       "Authentic Islamic Ruqya services, consultations, and spiritual healing resources. Expert guidance for protection against evil eye, black magic, and jinn possession.",
     images: [
@@ -63,13 +63,13 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Ruqya Healing Hub - Islamic Spiritual Healing",
+        alt: "Ruqya Healing - Islamic Spiritual Healing",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ruqya Healing Hub - Healing through Qur'an and Sunnah",
+    title: "Ruqya Healing - Healing through Qur'an and Sunnah",
     description: "Authentic Islamic Ruqya services, consultations, and spiritual healing resources.",
     images: ["/og-image.jpg"],
     creator: "@ruqyahealinghub",
