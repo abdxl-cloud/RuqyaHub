@@ -1,38 +1,80 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
-from typing import Optional
-import uuid
-from slugify import slugify
+# app/api/v1/articles.py
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from typing import List, Optional
 from app.database import get_db
 from app.models.article import Article
-from app.models.user import User
-from app.schemas.article import (
-    ArticleCreate,
-    ArticleUpdate,
-    ArticleResponse,
-    ArticleSummaryResponse,
-    ArticleListResponse,
-    ArticleRelatedResponse,
-)
-from app.core.security import get_current_admin_user
+from app.schemas.article import ArticleResponse, ArticleListResponse
+import random
 
-router = APIRouter(prefix="/articles", tags=["Articles"])
+router = APIRouter()
 
-
-@router.get("", response_model=ArticleListResponse)
-async def get_articles(
-    skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
-    category: Optional[str] = None,
-    is_published: Optional[bool] = Query(True),
+@router.get("/slug/{slug}", response_model=ArticleResponse)
+async def get_article_by_slug(
+    slug: str,
     db: Session = Depends(get_db)
 ):
-    """Get all articles with optional filtering."""
+    """Get a single article by slug"""
+    article = db.query(Article).filter(
+        Article.slug == slug,
+        Article.is_published == True
+    ).first()
+    
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    return article
+
+@router.get("/{id}", response_model=ArticleResponse)
+async def get_article_by_id(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    """Get a single article by ID"""
+    article = db.query(Article).filter(Article.id == id).first()
+    
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    return article
+
+@router.get("/{id}/related", response_model=List[ArticleResponse])
+async def get_related_articles(
+    id: int,
+    db: Session = Depends(get_db),
+    limit: int = Query(default=3, le=10)
+):
+    """Get related articles based on category"""
+    # First get the current article to find its category
+    current_article = db.query(Article).filter(Article.id == id).first()
+    
+    if not current_article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    # Get articles from the same category, excluding the current one
+    related = db.query(Article).filter(
+        Article.category == current_article.category,
+        Article.id != id,
+        Article.is_published == True
+    ).order_by(func.random()).limit(limit).all()
+    
+    return related
+
+@router.get("/", response_model=ArticleListResponse)
+async def get_articles(
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, le=100),
+    category: Optional[str] = None,
+    is_published: bool = True,
+    db: Session = Depends(get_db)
+):
+    """Get all articles with optional filtering"""
     query = db.query(Article)
     
-    if is_published is not None:
-        query = query.filter(Article.is_published == is_published)
+    if is_published:
+        query = query.filter(Article.is_published == True)
     
     if category:
         query = query.filter(Article.category == category)
@@ -40,40 +82,19 @@ async def get_articles(
     total = query.count()
     articles = query.order_by(Article.published_at.desc()).offset(skip).limit(limit).all()
     
-    return ArticleListResponse(
-        total=total,
-        items=[ArticleSummaryResponse.model_validate(a) for a in articles]
-    )
-
-
-@router.get("/slug/{slug}", response_model=ArticleResponse)
-async def get_article_by_slug(slug: str, db: Session = Depends(get_db)):
-    """Get an article by slug."""
-    article = db.query(Article).filter(Article.slug == slug).first()
-    
-    if not article:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Article not found"
-        )
-    
-    if not article.is_published:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Article not found"
-        )
-    
-    return ArticleResponse.model_validate(article)
-
+    return {
+        "total": total,
+        "items": articles
+    }
 
 @router.get("/category/{category}", response_model=ArticleListResponse)
 async def get_articles_by_category(
     category: str,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, le=100),
     db: Session = Depends(get_db)
 ):
-    """Get articles by category."""
+    """Get articles by category"""
     query = db.query(Article).filter(
         Article.category == category,
         Article.is_published == True
@@ -82,125 +103,8 @@ async def get_articles_by_category(
     total = query.count()
     articles = query.order_by(Article.published_at.desc()).offset(skip).limit(limit).all()
     
-    return ArticleListResponse(
-        total=total,
-        items=[ArticleSummaryResponse.model_validate(a) for a in articles]
-    )
-
-
-@router.post("", response_model=ArticleResponse, status_code=status.HTTP_201_CREATED)
-async def create_article(
-    article_data: ArticleCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
-):
-    """Create a new article (Admin only)."""
-    # Generate slug from title
-    base_slug = slugify(article_data.title)
-    slug = base_slug
-    counter = 1
+    return {
+        "total": total,
+        "items": articles
+    }
     
-    # Ensure slug is unique
-    while db.query(Article).filter(Article.slug == slug).first():
-        slug = f"{base_slug}-{counter}"
-        counter += 1
-    
-    new_article = Article(
-        id=str(uuid.uuid4()),
-        slug=slug,
-        **article_data.model_dump()
-    )
-    
-    db.add(new_article)
-    db.commit()
-    db.refresh(new_article)
-    
-    return ArticleResponse.model_validate(new_article)
-
-
-@router.patch("/{article_id}", response_model=ArticleResponse)
-async def update_article(
-    article_id: str,
-    article_data: ArticleUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
-):
-    """Update an article (Admin only)."""
-    article = db.query(Article).filter(Article.id == article_id).first()
-    
-    if not article:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Article not found"
-        )
-    
-    # Update fields
-    update_data = article_data.model_dump(exclude_unset=True)
-    
-    # If title is being updated, regenerate slug
-    if "title" in update_data:
-        base_slug = slugify(update_data["title"])
-        slug = base_slug
-        counter = 1
-        
-        while db.query(Article).filter(
-            Article.slug == slug,
-            Article.id != article_id
-        ).first():
-            slug = f"{base_slug}-{counter}"
-            counter += 1
-        
-        article.slug = slug
-    
-    for field, value in update_data.items():
-        setattr(article, field, value)
-    
-    db.commit()
-    db.refresh(article)
-    
-    return ArticleResponse.model_validate(article)
-
-
-@router.delete("/{article_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_article(
-    article_id: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_admin_user)
-):
-    """Delete an article (Admin only)."""
-    article = db.query(Article).filter(Article.id == article_id).first()
-    
-    if not article:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Article not found"
-        )
-    
-    db.delete(article)
-    db.commit()
-    
-    return None
-
-
-@router.get("/{article_id}/related", response_model=list[ArticleRelatedResponse])
-async def get_related_articles(
-    article_id: str,
-    limit: int = Query(3, ge=1, le=10),
-    db: Session = Depends(get_db)
-):
-    """Get related articles based on category."""
-    article = db.query(Article).filter(Article.id == article_id).first()
-    
-    if not article:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Article not found"
-        )
-    
-    related = db.query(Article).filter(
-        Article.category == article.category,
-        Article.id != article_id,
-        Article.is_published == True
-    ).limit(limit).all()
-    
-    return [ArticleRelatedResponse.model_validate(a) for a in related]
