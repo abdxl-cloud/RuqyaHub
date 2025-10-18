@@ -58,18 +58,20 @@ export interface ArticleCreate {
 // Service
 export interface Service {
   id: string
-  name: string
+  title: string // Changed from 'name' to 'title' to match frontend usage
   description: string
-  duration: string
+  icon?: string // Added icon field for frontend display
+  duration: number // Changed from string to number (minutes)
   price: number
   is_active: boolean
   created_at: string
 }
 
 export interface ServiceCreate {
-  name: string
+  title: string // Changed from 'name' to 'title'
   description: string
-  duration: string
+  icon?: string // Added icon field
+  duration: number // Changed from string to number
   price: number
   is_active?: boolean
 }
@@ -167,9 +169,10 @@ export interface Podcast {
   title: string
   description: string
   audio_url: string
-  cover_image_url?: string
+  cover_image?: string // Changed from 'cover_image_url' to 'cover_image' for consistency
   duration: string
-  published: boolean
+  published_date: string // Added published_date field
+  is_active: boolean // Changed from 'published' to 'is_active' for consistency
   created_at: string
 }
 
@@ -177,9 +180,10 @@ export interface PodcastCreate {
   title: string
   description: string
   audio_url: string
-  cover_image_url?: string
+  cover_image?: string // Changed from 'cover_image_url' to 'cover_image'
   duration: string
-  published?: boolean
+  published_date?: string // Added published_date field
+  is_active?: boolean // Changed from 'published' to 'is_active'
 }
 
 // Audio
@@ -188,9 +192,10 @@ export interface Audio {
   title: string
   description: string
   audio_url: string
+  reciter: string // Added reciter field for Ruqya audio
   category: string
   duration: string
-  published: boolean
+  is_active: boolean // Changed from 'published' to 'is_active' for consistency
   created_at: string
 }
 
@@ -198,9 +203,10 @@ export interface AudioCreate {
   title: string
   description: string
   audio_url: string
+  reciter: string // Added reciter field
   category: string
   duration: string
-  published?: boolean
+  is_active?: boolean // Changed from 'published' to 'is_active'
 }
 
 // Upload

@@ -2,6 +2,8 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Play, Download } from "lucide-react"
 import type { Metadata } from "next"
+import { apiClient } from "@/lib/api-client"
+import type { Podcast, PaginatedResponse } from "@/lib/api-types"
 
 export const metadata: Metadata = {
   title: "Spiritual Wellness Podcasts - Islamic Healing Discussions",
@@ -22,60 +24,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function PodcastsPage() {
-  const podcasts = [
-    {
-      id: 1,
-      title: "Understanding Spiritual Wellness in Islam",
-      description:
-        "An introduction to Islamic spiritual health and the importance of maintaining a strong connection with Allah.",
-      duration: "45:32",
-      date: "March 18, 2024",
-      image: "/islamic-podcast-microphone.jpg",
-    },
-    {
-      id: 2,
-      title: "The Power of Ruqya: Stories of Healing",
-      description:
-        "Real stories of people who found healing through authentic Islamic Ruqya and their journey to spiritual wellness.",
-      duration: "52:18",
-      date: "March 11, 2024",
-      image: "/healing-light.jpg",
-    },
-    {
-      id: 3,
-      title: "Protecting Your Home and Family",
-      description:
-        "Practical guidance on creating a spiritually protected environment for your family according to the Sunnah.",
-      duration: "38:45",
-      date: "March 4, 2024",
-      image: "/islamic-home-protection.jpg",
-    },
-    {
-      id: 4,
-      title: "Dealing with Anxiety Through Islamic Practices",
-      description: "How to manage anxiety and stress using authentic Islamic supplications and spiritual practices.",
-      duration: "41:20",
-      date: "February 26, 2024",
-      image: "/peaceful-meditation.png",
-    },
-    {
-      id: 5,
-      title: "The Science Behind Ruqya",
-      description: "Exploring the spiritual and psychological aspects of Ruqya and how it brings healing.",
-      duration: "48:15",
-      date: "February 19, 2024",
-      image: "/quran-and-science.jpg",
-    },
-    {
-      id: 6,
-      title: "Common Misconceptions About Jinn",
-      description: "Clarifying myths and misconceptions about jinn based on authentic Islamic sources.",
-      duration: "43:50",
-      date: "February 12, 2024",
-      image: "/islamic-knowledge.jpg",
-    },
-  ]
+async function getPodcasts(): Promise<Podcast[]> {
+  try {
+    const response = await apiClient.get<PaginatedResponse<Podcast>>("/podcasts?skip=0&limit=100")
+    return response.items.filter((podcast) => podcast.is_active)
+  } catch (error) {
+    console.error("Failed to fetch podcasts:", error)
+    return []
+  }
+}
+
+export default async function PodcastsPage() {
+  const podcasts = await getPodcasts()
 
   return (
     <div className="min-h-screen py-16 md:py-20">
@@ -92,47 +52,55 @@ export default function PodcastsPage() {
         </div>
 
         {/* Podcasts List */}
-        <div className="space-y-6 max-w-4xl mx-auto">
-          {podcasts.map((podcast) => (
-            <Card key={podcast.id} className="hover:shadow-lg transition-shadow">
-              <div className="flex flex-col md:flex-row gap-6 p-6">
-                {/* Podcast Image */}
-                <div className="w-full md:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
-                  <img
-                    src={podcast.image || "/placeholder.svg"}
-                    alt={podcast.title}
-                    className="w-full h-full object-cover"
-                  />
+        {podcasts.length === 0 ? (
+          <Card>
+            <div className="p-12 text-center">
+              <p className="text-muted-foreground">No podcasts available at the moment.</p>
+            </div>
+          </Card>
+        ) : (
+          <div className="space-y-6 max-w-4xl mx-auto">
+            {podcasts.map((podcast) => (
+              <Card key={podcast.id} className="hover:shadow-lg transition-shadow">
+                <div className="flex flex-col md:flex-row gap-6 p-6">
+                  {/* Podcast Image */}
+                  <div className="w-full md:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+                    <img
+                      src={podcast.cover_image || "/placeholder.svg?height=192&width=192&query=podcast cover"}
+                      alt={podcast.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Podcast Info */}
+                  <div className="flex-1 space-y-4">
+                    <div>
+                      <CardTitle className="text-2xl font-serif mb-2">{podcast.title}</CardTitle>
+                      <CardDescription className="text-base leading-relaxed">{podcast.description}</CardDescription>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>{new Date(podcast.published_date).toLocaleDateString()}</span>
+                      <span>•</span>
+                      <span>{podcast.duration}</span>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <Button>
+                        <Play className="h-4 w-4 mr-2" />
+                        Play Episode
+                      </Button>
+                      <Button variant="outline">
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Podcast Info */}
-                <div className="flex-1 space-y-4">
-                  <div>
-                    <CardTitle className="text-2xl font-serif mb-2">{podcast.title}</CardTitle>
-                    <CardDescription className="text-base leading-relaxed">{podcast.description}</CardDescription>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>{podcast.date}</span>
-                    <span>•</span>
-                    <span>{podcast.duration}</span>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button>
-                      <Play className="h-4 w-4 mr-2" />
-                      Play Episode
-                    </Button>
-                    <Button variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Subscribe Section */}
         <section className="mt-16 md:mt-20 bg-card rounded-lg p-8 md:p-12 border border-border">
