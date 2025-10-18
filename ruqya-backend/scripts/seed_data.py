@@ -468,67 +468,88 @@ def seed_products(db):
     
     products_data = [
         {
-            "name": "Zamzam Water (5L)",
-            "description": "Authentic Zamzam water from Mecca, blessed and purified. Perfect for Ruqya treatment and daily consumption.",
-            "price": 25.00,
-            "stock_quantity": 50,
-            "image": "/uploads/products/zamzam-water.jpg"
-        },
-        {
-            "name": "Black Seed Oil (100ml)",
-            "description": "Pure black seed oil (Nigella Sativa) as recommended by the Prophet (PBUH). Known for its healing properties.",
-            "price": 15.00,
+            "name": "Ruqyah Water (Ma'u shifa)",
+            "description": "Blessed water recited with powerful Quranic verses for spiritual healing and protection. Use for drinking, bathing, and home purification.",
+            "price": 5000.00,
             "stock_quantity": 100,
-            "image": "/uploads/products/black-seed-oil.jpg"
+            "image": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=500&q=80"
         },
         {
-            "name": "Sidr Leaves (100g)",
-            "description": "Natural Sidr leaves for Ruqya baths and treatment. Used in Islamic spiritual healing for centuries.",
-            "price": 10.00,
+            "name": "Ruqyah Honey",
+            "description": "Pure natural honey infused with Quranic recitation. Known for its healing properties and spiritual benefits. Take daily for health and protection.",
+            "price": 20000.00,
+            "stock_quantity": 50,
+            "image": "https://images.unsplash.com/photo-1587049352846-4a222e784acc?w=500&q=80"
+        },
+        {
+            "name": "Ruqyah Olive Oil",
+            "description": "Extra virgin olive oil blessed with Quranic verses. Use for massage, cooking, or apply on affected areas during Ruqya treatment.",
+            "price": 10000.00,
             "stock_quantity": 75,
-            "image": "/uploads/products/sidr-leaves.jpg"
+            "image": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&q=80"
         },
         {
-            "name": "Ruqya Water Kit",
-            "description": "Complete kit with bottle, Quranic verses, and instructions for preparing Ruqya water at home.",
-            "price": 20.00,
-            "stock_quantity": 60,
-            "image": "/uploads/products/ruqya-kit.jpg"
-        },
-        {
-            "name": "Miswak (Natural Toothbrush)",
-            "description": "Traditional Miswak stick from Arak tree. Sunnah of the Prophet and excellent for oral hygiene.",
-            "price": 5.00,
-            "stock_quantity": 200,
-            "image": "/uploads/products/miswak.jpg"
-        },
-        {
-            "name": "Prayer Beads (Tasbih)",
-            "description": "33-bead tasbih for dhikr and remembrance of Allah. Made from natural wood.",
-            "price": 8.00,
-            "stock_quantity": 150,
-            "image": "/uploads/products/tasbih.jpg"
-        },
-        {
-            "name": "Dates - Ajwa (500g)",
-            "description": "Premium Ajwa dates from Madinah. The Prophet said: 'He who eats seven Ajwa dates every morning, will not be harmed by poison or magic.'",
-            "price": 30.00,
-            "stock_quantity": 40,
-            "image": "/uploads/products/ajwa-dates.jpg"
-        },
-        {
-            "name": "Olive Oil (250ml)",
-            "description": "Extra virgin olive oil, blessed and pure. Can be used for Ruqya treatment and cooking.",
-            "price": 12.00,
+            "name": "Ruqyah Oil",
+            "description": "Special blend of blessed oils with Quranic recitation. Apply on body for protection and healing from spiritual ailments.",
+            "price": 10000.00,
             "stock_quantity": 80,
-            "image": "/uploads/products/olive-oil.jpg"
+            "image": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=500&q=80"
         },
         {
-            "name": "Islamic Books Bundle",
-            "description": "Collection of authentic Islamic books on Ruqya, protection, and spiritual healing.",
-            "price": 45.00,
-            "stock_quantity": 30,
-            "image": "/uploads/products/books-bundle.jpg"
+            "name": "Ruqyah Bakhoor",
+            "description": "Premium incense blessed with Quranic verses. Burn in your home to purify the environment and drive away evil spirits.",
+            "price": 10000.00,
+            "stock_quantity": 60,
+            "image": "https://images.unsplash.com/photo-1602874801006-e24aa9f2d6d7?w=500&q=80"
+        },
+        {
+            "name": "Brain Booster",
+            "description": "Natural herbal supplement with Quranic blessings to enhance memory, focus, and mental clarity. Perfect for students and professionals.",
+            "price": 20000.00,
+            "stock_quantity": 40,
+            "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80"
+        },
+        {
+            "name": "Infection Treatment (Men & Women)",
+            "description": "Islamic herbal remedy for treating various infections. Blessed with Quranic verses for enhanced healing. Suitable for both men and women.",
+            "price": 10000.00,
+            "stock_quantity": 50,
+            "image": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=500&q=80"
+        },
+        {
+            "name": "Ruqyah Hair Cream",
+            "description": "Nourishing hair cream infused with natural ingredients and Quranic blessings. Promotes healthy hair growth and scalp protection.",
+            "price": 10000.00,
+            "stock_quantity": 70,
+            "image": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=500&q=80"
+        },
+        {
+            "name": "Ruqyah Soap",
+            "description": "Handmade soap with natural ingredients and Quranic recitation. Cleanses body and provides spiritual purification.",
+            "price": 5000.00,
+            "stock_quantity": 120,
+            "image": "https://images.unsplash.com/photo-1588016367169-1c596f0ad3e6?w=500&q=80"
+        },
+        {
+            "name": "Ruqyah Spray",
+            "description": "Blessed water spray for instant protection. Spray in your home, car, or on yourself for spiritual cleansing and protection.",
+            "price": 5000.00,
+            "stock_quantity": 90,
+            "image": "https://images.unsplash.com/photo-1585155770960-3ea1f48c6282?w=500&q=80"
+        },
+        {
+            "name": "Ruqyah Protection Special Package",
+            "description": "Complete protection package including blessed water, oil, bakhoor, spray, and special duas. Everything you need for comprehensive spiritual protection.",
+            "price": 200000.00,
+            "stock_quantity": 15,
+            "image": "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=500&q=80"
+        },
+        {
+            "name": "Sihir/Black Magic Treatment Package",
+            "description": "Intensive treatment package for breaking black magic (sihr). Includes specialized oils, blessed water, bakhoor, and detailed treatment instructions.",
+            "price": 150000.00,
+            "stock_quantity": 20,
+            "image": "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=500&q=80"
         }
     ]
     
